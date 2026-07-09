@@ -1,0 +1,89 @@
+pkgbase = arqueon-desktop-assets
+	pkgdesc = Curated desktop assets (meta packages)
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/arqueon/desktop-assets
+	arch = any
+	license = MIT
+
+pkgname = arqueon-desktop-assets
+	pkgdesc = Curated desktop assets — everything
+	depends = arqueon-desktop-engine
+	depends = arqueon-desktop-icons
+	depends = arqueon-desktop-themes
+	depends = arqueon-desktop-qt
+	depends = arqueon-desktop-cursors
+	depends = arqueon-desktop-fonts
+
+pkgname = arqueon-desktop-engine
+	pkgdesc = Dynamic colour engine: Material You generation and folder recolouring
+	depends = matugen
+	depends = papirus-folders
+
+pkgname = arqueon-desktop-icons
+	pkgdesc = Icon themes: Papirus as the working set, Adwaita/Breeze as fallback
+	depends = papirus-icon-theme
+	depends = adwaita-icon-theme
+	depends = breeze-icons
+	optdepends = tela-icon-theme: flat, colourful alternative
+	optdepends = colloid-icon-theme-git: closest match to a Material shell
+	optdepends = qogir-icon-theme-git: muted Material alternative
+	optdepends = fluent-icon-theme-git: Windows 11 look
+	optdepends = kora-icon-theme: elegant, well maintained
+	optdepends = papirus-folders-catppuccin-git: Catppuccin folder accents for Papirus
+
+pkgname = arqueon-desktop-themes
+	pkgdesc = GTK themes. GTK4/libadwaita takes colour only — see the note below
+	depends = adw-gtk-theme
+	optdepends = catppuccin-gtk-theme-git: Catppuccin, 9 accents in light and dark
+	optdepends = colloid-gtk-theme-git: Material-flavoured, actively maintained
+	optdepends = orchis-theme: rounded Material theme (official repo)
+	optdepends = fluent-gtk-theme-git: Windows 11 look
+	optdepends = whitesur-gtk-theme-git: macOS look
+	optdepends = graphite-gtk-theme-git: flat, high-contrast
+
+pkgname = arqueon-desktop-qt
+	pkgdesc = Qt5/Qt6 consistency on a non-KDE Wayland session
+	depends = qt5ct
+	depends = qt6ct
+	optdepends = kvantum: SVG-drawn Qt widgets (needs a Kvantum theme; qt6ct alone is enough for colour)
+	optdepends = kvantum-qt5: the same for Qt5
+	optdepends = qadwaitadecorations-qt6: Adwaita-style client-side decorations for Qt apps
+
+pkgname = arqueon-desktop-cursors
+	pkgdesc = Cursor themes
+	depends = catppuccin-cursors-mocha
+	optdepends = catppuccin-cursors-latte: light-mode counterpart
+	optdepends = bibata-cursor-theme: the classic shape (upstream quiet since 2024)
+	optdepends = capitaine-cursors: neutral, complete, good at HiDPI
+	optdepends = phinger-cursors: soft alternative
+	optdepends = adwaita-cursors: GNOME default, fallback
+
+pkgname = arqueon-desktop-fonts
+	pkgdesc = Coding, UI and document fonts, with Nerd glyphs by fallback
+	depends = otf-cascadia-code
+	depends = ttf-jetbrains-mono
+	depends = ttf-nerd-fonts-symbols
+	depends = ttf-roboto
+	depends = inter-font
+	depends = adobe-source-serif-fonts
+	depends = noto-fonts
+	depends = noto-fonts-cjk
+	depends = noto-fonts-emoji
+	depends = ttf-liberation
+	optdepends = maplemono-nf: rounded coding font with the best ligatures and real italics
+	optdepends = maplemono-variable: the same, unpatched, as a variable font
+	optdepends = otf-monaspace: five-style superfamily with texture healing
+	optdepends = ttf-iosevka-nerd: narrow, fits more columns
+	optdepends = ttf-fira-code: classic ligature font
+	optdepends = ttf-jetbrains-mono-nerd: patched JetBrains Mono, for terminals without font fallback
+	optdepends = adwaita-fonts: GNOME Adwaita Sans and Mono
+
+pkgname = arqueon-desktop-fonts-pairings
+	pkgdesc = Two document typeface pairings (sans + serif + mono)
+	depends = ttf-archivo-variable
+	depends = ttf-archivo-narrow
+	depends = ttf-piazzolla-variable
+	depends = ttf-impallari-libre-franklin
+	depends = adobe-source-serif-fonts
+	depends = ttf-spline-sans-mono

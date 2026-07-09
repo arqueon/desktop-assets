@@ -1,0 +1,72 @@
+# Maintainer: Rubén García <arqueonautis@gmail.com>
+# Upstream AUR maintainer: Zane Fernandes <zane.ferns360@gmail.com>
+#
+# Local fix for the AUR package, which does not build.
+#
+# Upstream's themes/install.sh ends in a "Session Integration" step that applies
+# the theme to the running desktop: it calls `xfconf-query`, `gsettings` and
+# friends. Inside makepkg's fakeroot there is no session and no D-Bus, so it
+# dies with
+#
+#     Failed to init libxfconf: Error sending credentials:
+#     Error sending message: Operation not permitted
+#     ==> ERROR: A failure occurred in package().
+#
+# and before that it stops to ask two interactive questions, which a package
+# build must never do either.
+#
+# install.sh already has the escape hatch (themes/install.sh:127): with
+# BATCH_MODE=true it skips the interactive menu, leaves MENU_RESULT=1, and
+# therefore never reaches the session-integration branch. The AUR PKGBUILD
+# simply does not set it. One line fixes the build; nothing is patched.
+#
+# Verified: BATCH_MODE=true ./install.sh --dest <tmp> --theme all --color light dark
+#           exits 0 and installs 96 theme directories, Catppuccin-Red-Dark among
+#           them, without touching the session.
+#
+# Report upstream: https://aur.archlinux.org/packages/catppuccin-gtk-theme-git
+
+pkgname='catppuccin-gtk-theme-git'
+_reponame='Catppuccin-GTK-Theme'
+pkgver=r83.a0f69cc33
+pkgrel=1
+pkgdesc='A GTK theme based on the Catppuccin colour palette.'
+arch=("any")
+url="https://github.com/Fausto-Korpsvart/${_reponame}"
+license=("GPL3")
+depends=("gnome-themes-extra")
+optdepends=("gtk-engine-murrine")
+makedepends=("git" "sassc")
+provides=("catppuccin-gtk-theme-git")
+conflicts=("catppuccin-gtk-theme-git")
+source=("git+${url}.git")
+sha256sums=('SKIP')
+options=(!strip !debug !libtool !emptydirs)
+
+pkgver() {
+    cd "${_reponame}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+    cd "${_reponame}/themes"
+    ./build.sh
+}
+
+package() {
+    cd "${_reponame}"
+    install -D -m0644 -t "${pkgdir}/usr/share/doc/${pkgname}" README.md
+    install -D -m0644 -t "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+
+    mkdir -p "${pkgdir}/usr/share/themes"
+    cd themes
+    # The only change from the AUR PKGBUILD.
+    BATCH_MODE=true ./install.sh --dest "${pkgdir}/usr/share/themes" \
+        --theme all --color light dark
+
+    mkdir -p "${pkgdir}/usr/share/icons"
+    cd ../icons
+    for icontheme in */; do
+        cp -r "$icontheme" "${pkgdir}/usr/share/icons/"
+    done
+}
