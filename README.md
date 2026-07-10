@@ -20,6 +20,19 @@ viven en el AUR; todo lo demás es de repos oficiales y `pacman -U` lo arrastra
 solo. (En CachyOS, `kvantum-theme-libadwaita-git` viene del repo `cachyos` y
 paru lo toma de ahí sin compilar.)
 
+Un quinto paso, opcional pero recomendado si el escritorio es DMS:
+
+```sh
+paru -S qt6ct-kde        # sustituye a qt6ct (provides/conflicts): mismo qt6ct,
+                         # pero capaz de leer la paleta KColorScheme que DMS exporta
+```
+
+Y para el emparejado Kvantum↔GTK del tema que uses, su media naranja:
+
+```sh
+paru -S --asdeps kvantum-theme-catppuccin-git   # o -whitesur-git, -orchis-git…
+```
+
 **Ni `paru -U` ni `makepkg -si` sirven aquí** (comprobado el 10-jul-2026 con
 paru 2.1.0): `paru -U` es un *passthrough* a `pacman -U` y no resuelve
 dependencias del AUR — instala en silencio solo los metas cuyas dependencias ya
@@ -70,6 +83,18 @@ Qt solo se ve *igual* que GTK cuando las dos mitades salen del mismo diseño
 
 Sin Kvantum empaquetado: Colloid, Graphite y Fluent (el de Fluent lleva
 huérfano desde 2020) — fuera hasta que alguien los empaquete.
+
+### El escritorio de referencia (verificado 10-jul-2026)
+
+La combinación que este catálogo alimenta y que está corriendo en producción:
+DankMaterialShell + [dms-theme-sync ≥ 0.7](https://github.com/arqueon/dms-theme-sync)
+con su ruta de sincronización **Automatic**, `qt6ct-kde` en lugar de qt6ct, y
+Kvantum con la pareja del tema GTK activo. Con eso la ruta se resuelve sola en
+cada apply: pareja Kvantum si existe → Kvantum renderizado de la paleta DMS →
+paleta vía qt6ct-kde → seguir a GTK. El plugin detecta qué hay instalado (sonda
+`--probe-qt`) y diagnostica lo que falte — incluida la trampa silenciosa de que
+el qt6ct de fábrica no sabe leer `DankMatugen.colors` y deja las apps Qt con la
+paleta por defecto sin decir nada.
 
 ### Opcionales documentados (`optdepends`)
 

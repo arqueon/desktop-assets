@@ -1,7 +1,7 @@
 pkgbase = arqueon-desktop-assets
 	pkgdesc = Curated desktop assets (meta packages)
 	pkgver = 1.1.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/arqueon/desktop-assets
 	arch = any
 	license = MIT
@@ -64,6 +64,7 @@ pkgname = arqueon-desktop-unified
 	optdepends = kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git
 	optdepends = kvantum-theme-materia: pairs with materia-gtk-theme, both official repos
 	optdepends = materia-gtk-theme: the GTK half of the Materia pair
+	optdepends = qt6ct-kde: the non-Kvantum half of the story — parses the KColorScheme palette DMS exports, which stock qt6ct silently cannot
 
 pkgname = arqueon-desktop-qt
 	pkgdesc = Qt5/Qt6 consistency on a non-KDE Wayland session

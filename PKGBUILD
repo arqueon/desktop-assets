@@ -25,7 +25,7 @@ pkgname=(
   arqueon-desktop-login
 )
 pkgver=1.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Curated desktop assets (meta packages)"
 arch=('any')
 url="https://github.com/arqueon/desktop-assets"
@@ -130,6 +130,7 @@ package_arqueon-desktop-unified() {
     'kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git'
     'kvantum-theme-materia: pairs with materia-gtk-theme, both official repos'
     'materia-gtk-theme: the GTK half of the Materia pair'
+    'qt6ct-kde: the non-Kvantum half of the story — parses the KColorScheme palette DMS exports, which stock qt6ct silently cannot'
   )
 }
 
