@@ -27,31 +27,53 @@ Los paquetes están **vacíos**: solo declaran dependencias. No instalan nada en
 `$HOME` ni escriben configuración. Qué tema se usa en cada momento lo decide
 DankMaterialShell, y lo propaga su plugin `dms-theme-sync`.
 
-## Los paquetes
+## El catálogo
 
-| Paquete | Qué trae |
+Los paquetes marcados con `*` vienen del AUR; el resto, de repos oficiales.
+
+### Lo que instala siempre el meta
+
+`arqueon-desktop-assets` arrastra estos seis, y cada uno sus *depends*:
+
+| Metapaquete | Assets |
 |---|---|
-| `arqueon-desktop-assets` | meta: instala todos los de abajo |
-| `arqueon-desktop-engine` | `matugen` (color dinámico) + `papirus-folders` |
-| `arqueon-desktop-icons` | Papirus como set de trabajo; Adwaita y Breeze como fallback |
-| `arqueon-desktop-themes` | `adw-gtk3`, más alternativas en `optdepends` |
-| `arqueon-desktop-qt` | `qt5ct` + `qt6ct` |
-| `arqueon-desktop-cursors` | cursores Catppuccin (los 16 acentos) |
-| `arqueon-desktop-fonts` | mono, interfaz, documento y cobertura |
-| `arqueon-desktop-fonts-pairings` | dos pares tipográficos para documentos |
+| `arqueon-desktop-engine` | `matugen` (color dinámico Material You) · `papirus-folders`\* (recoloreo de carpetas por CLI) |
+| `arqueon-desktop-icons` | `papirus-icon-theme` (set de trabajo) · `adwaita-icon-theme` y `breeze-icons` (fallback obligado de GTK/Qt) |
+| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark`, el único GTK3 que sigue a libadwaita y que matugen recolorea bien |
+| `arqueon-desktop-qt` | `qt5ct` · `qt6ct` |
+| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (los 16 acentos, alias XCursor completo) |
+| `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glifos por fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (cobertura) · `ttf-liberation` (métricas MS con licencia limpia) |
 
-El meta **no** incluye `fonts-pairings`: son fuentes de maquetación, no del
-escritorio. Instálalo aparte si hace falta — sus fuentes variables también
-viven en el AUR:
+En total, la instalación base son 24 paquetes: los 7 metas y 17 dependencias
+reales.
+
+### Opcionales documentados (`optdepends`)
+
+No los instala nada; son el menú curado de alternativas, con su porqué en el
+`PKGBUILD`:
+
+| Ámbito | Paquetes |
+|---|---|
+| Iconos | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (acentos Catppuccin para Papirus) |
+| Temas GTK | `catppuccin-gtk-theme-git`\* (el vivo; ver `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* |
+| Qt | `kvantum` · `kvantum-qt5` · `qadwaitadecorations-qt6`\* · `qt6-tools` (trae `qtdiag`, que usa dms-theme-sync) |
+| Cursores | `catppuccin-cursors-latte`\* (modo claro) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` |
+| Fuentes | `maplemono-nf`\* · `maplemono-variable`\* · `otf-monaspace` · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (para terminales sin *font fallback*) · `adwaita-fonts` |
+
+### Aparte, por diseño: los pares tipográficos
+
+El meta **no** incluye `arqueon-desktop-fonts-pairings`: son fuentes de
+maquetación, no del escritorio. Los dos pares son **Archivo + Archivo Narrow +
+Piazzolla** y **Libre Franklin + Source Serif 4 + Spline Sans Mono**; hasta
+ahora vivían como ficheros sueltos en `~/.local/share/fonts`, y las seis
+familias resultan estar empaquetadas — en builds variables, que es lo que eran
+los ficheros sueltos. Instálalo aparte si hace falta:
 
 ```sh
 paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
   ttf-piazzolla-variable ttf-impallari-libre-franklin ttf-spline-sans-mono
 sudo pacman -U arqueon-desktop-fonts-pairings-*.pkg.tar.zst
-``` Los dos pares son
-Archivo + Archivo Narrow + Piazzolla, y Libre Franklin + Source Serif 4 +
-Spline Sans Mono; hasta ahora vivían como ficheros sueltos en
-`~/.local/share/fonts`, y las seis familias resultan estar empaquetadas.
+```
 
 ## Decisiones que conviene no reabrir
 
