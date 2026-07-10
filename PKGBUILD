@@ -95,6 +95,7 @@ package_arqueon-desktop-qt() {
     'kvantum: SVG-drawn Qt widgets (needs a Kvantum theme; qt6ct alone is enough for colour)'
     'kvantum-qt5: the same for Qt5'
     'qadwaitadecorations-qt6: Adwaita-style client-side decorations for Qt apps'
+    'qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load'
   )
 }
 

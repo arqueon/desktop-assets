@@ -49,6 +49,7 @@ pkgname = arqueon-desktop-qt
 	optdepends = kvantum: SVG-drawn Qt widgets (needs a Kvantum theme; qt6ct alone is enough for colour)
 	optdepends = kvantum-qt5: the same for Qt5
 	optdepends = qadwaitadecorations-qt6: Adwaita-style client-side decorations for Qt apps
+	optdepends = qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load
 
 pkgname = arqueon-desktop-cursors
 	pkgdesc = Cursor themes
