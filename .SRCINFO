@@ -69,7 +69,7 @@ pkgname = arqueon-desktop-qt
 	pkgdesc = Qt5/Qt6 consistency on a non-KDE Wayland session
 	depends = qt5ct
 	depends = qt6ct
-	optdepends = qt6ct-kde: drop-in qt6ct (provides/conflicts it) patched so KDE apps render correctly; under evaluation for dms-theme-sync
+	optdepends = qt6ct-kde: drop-in qt6ct (provides/conflicts it) that parses the KColorScheme palette DMS exports — dms-theme-sync 0.7 builds its kcolorscheme route on it
 	optdepends = qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load
 
 pkgname = arqueon-desktop-cursors

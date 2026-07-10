@@ -140,7 +140,7 @@ package_arqueon-desktop-qt() {
   # Kvantum and the CSD plugin moved to arqueon-desktop-unified.
   depends=(qt5ct qt6ct)
   optdepends=(
-    'qt6ct-kde: drop-in qt6ct (provides/conflicts it) patched so KDE apps render correctly; under evaluation for dms-theme-sync'
+    'qt6ct-kde: drop-in qt6ct (provides/conflicts it) that parses the KColorScheme palette DMS exports — dms-theme-sync 0.7 builds its kcolorscheme route on it'
     'qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load'
   )
 }
