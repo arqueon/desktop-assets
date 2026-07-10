@@ -17,12 +17,14 @@ pkgname=(
   arqueon-desktop-engine
   arqueon-desktop-icons
   arqueon-desktop-themes
+  arqueon-desktop-unified
   arqueon-desktop-qt
   arqueon-desktop-cursors
   arqueon-desktop-fonts
   arqueon-desktop-fonts-pairings
+  arqueon-desktop-login
 )
-pkgver=1.0.0
+pkgver=1.1.0
 pkgrel=1
 pkgdesc="Curated desktop assets (meta packages)"
 arch=('any')
@@ -35,9 +37,11 @@ package_arqueon-desktop-assets() {
     arqueon-desktop-engine
     arqueon-desktop-icons
     arqueon-desktop-themes
+    arqueon-desktop-unified
     arqueon-desktop-qt
     arqueon-desktop-cursors
     arqueon-desktop-fonts
+    arqueon-desktop-login
   )
 }
 
@@ -62,6 +66,10 @@ package_arqueon-desktop-icons() {
     'fluent-icon-theme-git: Windows 11 look'
     'kora-icon-theme: elegant, well maintained'
     'papirus-folders-catppuccin-git: Catppuccin folder accents for Papirus'
+    'morewaita-icon-theme: adds app icons on top of Adwaita without replacing it; AUR package maintained by the upstream author'
+    'adwaita-colors-icon-theme: accent-coloured Adwaita folders (GNOME 47+ style), same author as MoreWaita'
+    'vimix-icon-theme: Material flavour, vinceliuice, alive (2025.08)'
+    'whitesur-icon-theme-git: completes the WhiteSur look'
   )
 }
 
@@ -85,6 +93,43 @@ package_arqueon-desktop-themes() {
     'fluent-gtk-theme-git: Windows 11 look'
     'whitesur-gtk-theme-git: macOS look'
     'graphite-gtk-theme-git: flat, high-contrast'
+    'gruvbox-gtk-theme-git: Gruvbox palette (Fausto-Korpsvart family)'
+    'tokyonight-gtk-theme-git: Tokyo Night palette (Fausto-Korpsvart family)'
+    'everforest-gtk-theme-git: Everforest palette (Fausto-Korpsvart family)'
+    'kanagawa-gtk-theme-git: Kanagawa palette (Fausto-Korpsvart family)'
+    'rose-pine-gtk-theme: Rose Pine palette'
+  )
+  # More dead traps besides catppuccin/gtk: dracula-gtk-theme (frozen 2023) and
+  # nordic-theme (frozen 2022) are stale AUR packages — deliberately out.
+}
+
+package_arqueon-desktop-unified() {
+  pkgdesc="Qt apps that pass for GTK: Kvantum with same-author theme pairs and Adwaita CSDs"
+  # The Qt<->GTK unification axis (research verified 2026-07-10). KvLibadwaita
+  # replicates libadwaita in Qt — the natural partner of adw-gtk3. Its author
+  # declares maintenance paused (last push 2025-09), acceptable because the
+  # libadwaita look itself is stable; kept as a hard depend with the pairs below
+  # as fallback. On CachyOS it comes from the cachyos repo; on vanilla Arch,
+  # from the AUR. qadwaitadecorations-qt6 draws Adwaita-style client-side
+  # decorations, closing the last visible gap (window titlebars).
+  #
+  # The optdepends are same-author Kvantum+GTK pairs, so both halves of the
+  # desktop are drawn from one design: WhiteSur and Orchis are vinceliuice
+  # (kvantum halves live in his -kde repos), Catppuccin's kvantum ships 56
+  # variants (4 flavours x 14 accents) matching Fausto-Korpsvart's GTK side.
+  # Materia is the only pair fully in official repos, but its upstream (nana-4)
+  # has been quiet for years — usable, not a pillar.
+  #
+  # No Kvantum for Colloid, Graphite or Fluent: their kvantum ports have no
+  # AUR package (Fluent's is orphaned since 2020), so they stay out.
+  depends=(kvantum kvantum-theme-libadwaita-git qadwaitadecorations-qt6)
+  optdepends=(
+    'kvantum-qt5: Kvantum for the remaining Qt5 apps'
+    'kvantum-theme-whitesur-git: pairs with whitesur-gtk-theme-git (same author)'
+    'kvantum-theme-orchis-git: pairs with orchis-theme (same author)'
+    'kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git'
+    'kvantum-theme-materia: pairs with materia-gtk-theme, both official repos'
+    'materia-gtk-theme: the GTK half of the Materia pair'
   )
 }
 
@@ -92,11 +137,10 @@ package_arqueon-desktop-qt() {
   pkgdesc="Qt5/Qt6 consistency on a non-KDE Wayland session"
   # QT_QPA_PLATFORMTHEME=qt6ct plus the palette DMS writes to
   # ~/.config/qt6ct/colors/. Never QT_QPA_PLATFORMTHEME=kde outside Plasma.
+  # Kvantum and the CSD plugin moved to arqueon-desktop-unified.
   depends=(qt5ct qt6ct)
   optdepends=(
-    'kvantum: SVG-drawn Qt widgets (needs a Kvantum theme; qt6ct alone is enough for colour)'
-    'kvantum-qt5: the same for Qt5'
-    'qadwaitadecorations-qt6: Adwaita-style client-side decorations for Qt apps'
+    'qt6ct-kde: drop-in qt6ct (provides/conflicts it) patched so KDE apps render correctly; under evaluation for dms-theme-sync'
     'qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load'
   )
 }
@@ -117,7 +161,14 @@ package_arqueon-desktop-cursors() {
     'capitaine-cursors: neutral, complete, good at HiDPI'
     'phinger-cursors: soft alternative'
     'adwaita-cursors: GNOME default, fallback'
+    'vimix-cursors: vinceliuice, official repo — closes the all-vinceliuice look'
+    'nordzy-cursors: Vimix-derived, alive (2.5.0, 2026-04)'
+    'xcursor-simp1e: minimal, consistent'
+    'googledot-cursor-theme: Google-style dot cursor'
+    'notwaita-cursor-theme: Adwaita-flavoured alternative'
   )
+  # Alias-set completeness of the five above is NOT verified yet (the Bibata
+  # lesson) — inspect before promoting any of them to a depend.
 }
 
 package_arqueon-desktop-fonts() {
@@ -143,11 +194,18 @@ package_arqueon-desktop-fonts() {
   optdepends=(
     'maplemono-nf: rounded coding font with the best ligatures and real italics'
     'maplemono-variable: the same, unpatched, as a variable font'
-    'otf-monaspace: five-style superfamily with texture healing'
+    'ttf-monaspace-variable: five-style superfamily with texture healing, variable axes (official repo; replaces otf-monaspace)'
     'ttf-iosevka-nerd: narrow, fits more columns'
     'ttf-fira-code: classic ligature font'
     'ttf-jetbrains-mono-nerd: patched JetBrains Mono, for terminals without font fallback'
     'adwaita-fonts: GNOME Adwaita Sans and Mono'
+    'otf-geist-mono-nerd: Vercel Geist Mono with Nerd glyphs (official repo)'
+    'ttf-geist: Geist as UI sans, alive (1.8.0)'
+    'ttf-geist-mono-variable: Geist Mono, variable build'
+    'otf-intel-one-mono: high-legibility mono (cachyos repo; AUR on vanilla Arch)'
+    'ttf-commit-mono: neutral, spacing-tuned mono'
+    'ttf-0xproto: distinctive-glyph mono, alive (2.502)'
+    'ttf-manrope: geometric UI sans, alive (2026-05)'
   )
 }
 
@@ -171,5 +229,17 @@ package_arqueon-desktop-fonts-pairings() {
     ttf-impallari-libre-franklin
     adobe-source-serif-fonts
     ttf-spline-sans-mono
+  )
+}
+
+package_arqueon-desktop-login() {
+  pkgdesc="Login and boot theming: SDDM and Plymouth (all optional)"
+  # Everything here is cosmetic and machine-specific, so nothing is a hard
+  # depend: the package exists to document the vetted choices. GRUB themes were
+  # evaluated and left out (grub-theme-vimix-* frozen since 2022).
+  optdepends=(
+    'sddm-silent-theme: modern SDDM theme, alive (1.5.0, 2026-06)'
+    'where-is-my-sddm-theme-git: the minimal SDDM alternative'
+    'plymouth-theme-catppuccin-mocha-git: boot splash from the Catppuccin project itself'
   )
 }
