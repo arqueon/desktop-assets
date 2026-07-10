@@ -2,8 +2,10 @@
 #
 # Reproducible desktop asset catalogue: icons, GTK/Qt themes, cursors and fonts.
 # Everything here resolves from the official repositories or the AUR — nothing
-# is fetched from a personal repo or built by hand, so `paru -U` on a fresh
-# machine reproduces the whole set.
+# is fetched from a personal repo or built by hand. The install flow lives in
+# the README: pre-install the two hard AUR depends with paru, then makepkg and
+# pacman -U the metas (paru -U is a pacman passthrough and cannot resolve AUR
+# dependencies; makepkg -si would install fonts-pairings, which stays separate).
 #
 # Nothing is installed to $HOME and no configuration is written: the runtime
 # theme is chosen by DankMaterialShell and propagated by its dms-theme-sync

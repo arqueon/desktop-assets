@@ -9,8 +9,19 @@ personal ni se compila a mano, así que en una máquina nueva basta:
 ```sh
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
-paru -U          # instala los metapaquetes y arrastra sus dependencias
+paru -S --needed --asdeps papirus-folders catppuccin-cursors-mocha
+makepkg
+sudo pacman -U arqueon-desktop-{assets,engine,icons,themes,qt,cursors,fonts}-*.pkg.tar.zst
 ```
+
+El primer paso existe porque esas dos son las únicas *depends* duras que viven
+en el AUR; todo lo demás es de repos oficiales y `pacman -U` lo arrastra solo.
+
+**Ni `paru -U` ni `makepkg -si` sirven aquí** (comprobado el 10-jul-2026 con
+paru 2.1.0): `paru -U` es un *passthrough* a `pacman -U` y no resuelve
+dependencias del AUR — instala en silencio solo los metas cuyas dependencias ya
+estén presentes y deja fuera el resto. Y `makepkg -si` instala **todos** los
+subpaquetes del split, incluido `fonts-pairings`, que por diseño va aparte.
 
 Los paquetes están **vacíos**: solo declaran dependencias. No instalan nada en
 `$HOME` ni escriben configuración. Qué tema se usa en cada momento lo decide
@@ -30,7 +41,14 @@ DankMaterialShell, y lo propaga su plugin `dms-theme-sync`.
 | `arqueon-desktop-fonts-pairings` | dos pares tipográficos para documentos |
 
 El meta **no** incluye `fonts-pairings`: son fuentes de maquetación, no del
-escritorio. Instálalo aparte si hace falta. Los dos pares son
+escritorio. Instálalo aparte si hace falta — sus fuentes variables también
+viven en el AUR:
+
+```sh
+paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
+  ttf-piazzolla-variable ttf-impallari-libre-franklin ttf-spline-sans-mono
+sudo pacman -U arqueon-desktop-fonts-pairings-*.pkg.tar.zst
+``` Los dos pares son
 Archivo + Archivo Narrow + Piazzolla, y Libre Franklin + Source Serif 4 +
 Spline Sans Mono; hasta ahora vivían como ficheros sueltos en
 `~/.local/share/fonts`, y las seis familias resultan estar empaquetadas.
