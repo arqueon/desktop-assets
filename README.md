@@ -122,8 +122,10 @@ los ficheros sueltos. Instálalo aparte si hace falta:
 
 ```sh
 paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
-  ttf-piazzolla-variable ttf-impallari-libre-franklin ttf-spline-sans-mono
-sudo pacman -U arqueon-desktop-fonts-pairings-*.pkg.tar.zst
+  ttf-piazzolla-variable ttf-spline-sans-mono
+(cd recipes/otf-impallari-libre-franklin && makepkg)   # el del AUR no compila
+sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst \
+  arqueon-desktop-fonts-pairings-*.pkg.tar.zst
 ```
 
 ## Decisiones que conviene no reabrir
@@ -187,6 +189,18 @@ depender de ellos. Cada receta explica el fallo y la corrección.
 
 ```sh
 cd recipes/catppuccin-gtk-theme-git && makepkg -si
+```
+
+- `otf-impallari-libre-franklin` (y su mitad `ttf-`) — el PKGBUILD del AUR
+  descarga `archive/master.zip` — un objetivo móvil — y lo valida contra un md5
+  horneado en 2020. Upstream ha empujado desde entonces («Roman v3.007»,
+  sep-2025), así que el checksum no volverá a cuadrar jamás. La receta fija la
+  fuente al commit y pone `epoch=1` para que paru no la "actualice" de vuelta
+  al 4.015 roto (upstream renumeró versiones hacia abajo).
+
+```sh
+cd recipes/otf-impallari-libre-franklin && makepkg
+sudo pacman -U ttf-impallari-libre-franklin-*.pkg.tar.zst
 ```
 
 ## Verificación

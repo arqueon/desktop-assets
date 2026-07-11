@@ -1,0 +1,45 @@
+# Maintainer: Rubén García <arqueonautis@gmail.com>
+# Upstream AUR maintainer: luxcem <a@luxcem.fr>
+#
+# Local fix for the AUR package, which does not build.
+#
+# The AUR PKGBUILD downloads .../Libre-Franklin/archive/master.zip — a moving
+# target — and validates it against an md5 baked in 2020. Upstream has pushed
+# since (last: "Roman v3.007", 2025-09), so the checksum can never match again:
+#
+#     otf-impallari-libre-franklin-4.015.zip ... FAILED
+#     ==> ERROR: One or more files did not pass the validity check!
+#
+# The fix is to pin the source to a commit, whose archive is stable and can be
+# checksummed honestly. Everything else is the AUR package unchanged.
+#
+# Upstream renumbered its versions (the old fonts said 4.015; the current repo
+# says 3.007), so epoch=1 keeps this recipe from being "upgraded" back to the
+# AUR's broken 4.015.
+#
+# Report upstream: https://aur.archlinux.org/packages/otf-impallari-libre-franklin
+
+pkgver=3.007
+_commit=5e76d2f48045806a2d6827622df023aec97cd59e
+epoch=1
+pkgrel=1
+pkgname=('otf-impallari-libre-franklin' 'ttf-impallari-libre-franklin')
+pkgdesc="The quintessential american typeface, from Pablo Impallari"
+arch=("any")
+url="https://github.com/impallari/Libre-Franklin"
+license=("custom:OFL")
+groups=("impallari-fonts")
+source=("$pkgname-$_commit.zip::$url/archive/$_commit.zip")
+sha256sums=('cb517d4f41b64c80d225c66957b252a89a97bd04a5908e8b8c6884d19cbafed2')
+
+package_otf-impallari-libre-franklin() {
+  cd "${srcdir}/Libre-Franklin-${_commit}"
+  install -Dm644 -t "$pkgdir"/usr/share/fonts/OTF/impallari fonts/OTF/*.otf
+  install -Dm644 OFL.txt "$pkgdir"/usr/share/licenses/${pkgname[0]}/LICENSE
+}
+
+package_ttf-impallari-libre-franklin() {
+  cd "${srcdir}/Libre-Franklin-${_commit}"
+  install -Dm644 -t "$pkgdir"/usr/share/fonts/TTF/impallari fonts/TTF/*.ttf
+  install -Dm644 OFL.txt "$pkgdir"/usr/share/licenses/${pkgname[1]}/LICENSE
+}
