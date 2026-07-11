@@ -1,10 +1,12 @@
 # desktop-assets
 
-Catálogo reproducible de iconos, temas GTK/Qt, cursores y fuentes para mi
-escritorio (CachyOS + niri + DankMaterialShell).
+*Read this in [Spanish](README.es.md).*
 
-Todo se resuelve desde **repos oficiales o el AUR**. Nada viene de un repo
-personal ni se compila a mano, así que en una máquina nueva basta:
+Reproducible catalogue of icons, GTK/Qt themes, cursors and fonts for my
+desktop (CachyOS + niri + DankMaterialShell).
+
+Everything resolves from **official repos or the AUR**. Nothing comes from a
+personal repo or a manual build, so on a fresh machine this is enough:
 
 ```sh
 git clone https://github.com/arqueon/desktop-assets
@@ -15,210 +17,213 @@ makepkg
 sudo pacman -U arqueon-desktop-{assets,engine,icons,themes,unified,qt,cursors,fonts,login}-*.pkg.tar.zst
 ```
 
-El primer paso existe porque esas cuatro son las únicas *depends* duras que
-viven en el AUR; todo lo demás es de repos oficiales y `pacman -U` lo arrastra
-solo. (En CachyOS, `kvantum-theme-libadwaita-git` viene del repo `cachyos` y
-paru lo toma de ahí sin compilar.)
+The first step exists because those four are the only hard *depends* that
+live in the AUR; everything else comes from official repos and `pacman -U`
+pulls it in by itself. (On CachyOS, `kvantum-theme-libadwaita-git` ships in
+the `cachyos` repo and paru takes it from there without building.)
 
-Un quinto paso, opcional pero recomendado si el escritorio es DMS:
-
-```sh
-paru -S qt6ct-kde        # sustituye a qt6ct (provides/conflicts): mismo qt6ct,
-                         # pero capaz de leer la paleta KColorScheme que DMS exporta
-```
-
-Y para el emparejado Kvantum↔GTK del tema que uses, su media naranja:
+A fifth step, optional but recommended if the desktop is DMS:
 
 ```sh
-paru -S --asdeps kvantum-theme-catppuccin-git   # o -whitesur-git, -orchis-git…
+paru -S qt6ct-kde        # replaces qt6ct (provides/conflicts): same qt6ct,
+                         # but able to read the KColorScheme palette DMS exports
 ```
 
-**Ni `paru -U` ni `makepkg -si` sirven aquí** (comprobado el 10-jul-2026 con
-paru 2.1.0): `paru -U` es un *passthrough* a `pacman -U` y no resuelve
-dependencias del AUR — instala en silencio solo los metas cuyas dependencias ya
-estén presentes y deja fuera el resto. Y `makepkg -si` instala **todos** los
-subpaquetes del split, incluido `fonts-pairings`, que por diseño va aparte.
+And for the Kvantum↔GTK pairing of whichever theme you use, its other half:
 
-Los paquetes están **vacíos**: solo declaran dependencias. No instalan nada en
-`$HOME` ni escriben configuración. Qué tema se usa en cada momento lo decide
-DankMaterialShell, y lo propaga su plugin `dms-theme-sync`.
+```sh
+paru -S --asdeps kvantum-theme-catppuccin-git   # or -whitesur-git, -orchis-git…
+```
 
-## El catálogo
+**Neither `paru -U` nor `makepkg -si` work here** (verified 2026-07-10 with
+paru 2.1.0): `paru -U` is a *passthrough* to `pacman -U` and does not resolve
+AUR dependencies — it silently installs only the metas whose dependencies are
+already present and leaves the rest out. And `makepkg -si` installs **all**
+subpackages of the split, including `fonts-pairings`, which by design ships
+separately.
 
-Los paquetes marcados con `*` vienen del AUR; el resto, de repos oficiales.
+The packages are **empty**: they only declare dependencies. They install
+nothing into `$HOME` and write no configuration. Which theme is in use at any
+moment is decided by DankMaterialShell and propagated by its
+`dms-theme-sync` plugin.
 
-### Lo que instala siempre el meta
+## The catalogue
 
-`arqueon-desktop-assets` arrastra estos ocho, y cada uno sus *depends*:
+Packages marked with `*` come from the AUR; the rest, from official repos.
 
-| Metapaquete | Assets |
+### What the meta always installs
+
+`arqueon-desktop-assets` pulls in these eight, and each one its *depends*:
+
+| Metapackage | Assets |
 |---|---|
-| `arqueon-desktop-engine` | `matugen` (color dinámico Material You) · `papirus-folders`\* (recoloreo de carpetas por CLI) |
-| `arqueon-desktop-icons` | `papirus-icon-theme` (set de trabajo) · `adwaita-icon-theme` y `breeze-icons` (fallback obligado de GTK/Qt) |
-| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark`, el único GTK3 que sigue a libadwaita y que matugen recolorea bien |
-| `arqueon-desktop-unified` | `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicado en Qt, pareja natural de adw-gtk3) · `qadwaitadecorations-qt6`\* (CSD estilo Adwaita para ventanas Qt) |
+| `arqueon-desktop-engine` | `matugen` (Material You dynamic color) · `papirus-folders`\* (folder recoloring via CLI) |
+| `arqueon-desktop-icons` | `papirus-icon-theme` (working set) · `adwaita-icon-theme` and `breeze-icons` (mandatory GTK/Qt fallback) |
+| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark`, the only GTK3 theme that tracks libadwaita and that matugen recolors well |
+| `arqueon-desktop-unified` | `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicated in Qt, the natural partner of adw-gtk3) · `qadwaitadecorations-qt6`\* (Adwaita-style CSD for Qt windows) |
 | `arqueon-desktop-qt` | `qt5ct` · `qt6ct` |
-| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (los 16 acentos, alias XCursor completo) |
-| `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glifos por fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (cobertura) · `ttf-liberation` (métricas MS con licencia limpia) |
-| `arqueon-desktop-login` | (vacío: solo documenta opcionales de SDDM/Plymouth) |
+| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (all 16 accents, complete XCursor alias set) |
+| `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glyphs via fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (coverage) · `ttf-liberation` (MS metrics with a clean license) |
+| `arqueon-desktop-login` | (empty: only documents SDDM/Plymouth optionals) |
 
-† repo `cachyos` en CachyOS; AUR en Arch puro. Igual `otf-intel-one-mono` entre
-los opcionales.
+† `cachyos` repo on CachyOS; AUR on plain Arch. Same for `otf-intel-one-mono`
+among the optionals.
 
-En total, la instalación base son 31 paquetes: los 9 metas y 22 dependencias
-reales.
+In total, the base install is 31 packages: the 9 metas and 22 real
+dependencies.
 
-### Las parejas Kvantum + GTK (por qué existe `unified`)
+### The Kvantum + GTK pairs (why `unified` exists)
 
-Qt solo se ve *igual* que GTK cuando las dos mitades salen del mismo diseño
-(investigación verificada 10-jul-2026):
+Qt only looks *the same* as GTK when both halves come from the same design
+(research verified 2026-07-10):
 
-| Pareja | Mitad Kvantum | Mitad GTK | Estado |
+| Pair | Kvantum half | GTK half | Status |
 |---|---|---|---|
-| **Libadwaita** (la de casa) | `kvantum-theme-libadwaita-git`† | `adw-gtk-theme` | autor en pausa declarada (sep-2025); estable porque el look libadwaita no cambia |
-| WhiteSur | `kvantum-theme-whitesur-git`\* | `whitesur-gtk-theme-git`\* | vinceliuice, vivo (GTK jul-2026) |
-| Orchis | `kvantum-theme-orchis-git`\* | `orchis-theme` | vinceliuice, vivo |
-| Catppuccin | `kvantum-theme-catppuccin-git`\* (56 variantes) | `catppuccin-gtk-theme-git`\* (Fausto-Korpsvart) | vivos ambos lados |
-| Materia | `kvantum-theme-materia` | `materia-gtk-theme` | única 100 % repos oficiales; upstream quieto hace años |
+| **Libadwaita** (the home team) | `kvantum-theme-libadwaita-git`† | `adw-gtk-theme` | author on declared hiatus (Sep 2025); stable because the libadwaita look doesn't change |
+| WhiteSur | `kvantum-theme-whitesur-git`\* | `whitesur-gtk-theme-git`\* | vinceliuice, alive (GTK Jul 2026) |
+| Orchis | `kvantum-theme-orchis-git`\* | `orchis-theme` | vinceliuice, alive |
+| Catppuccin | `kvantum-theme-catppuccin-git`\* (56 variants) | `catppuccin-gtk-theme-git`\* (Fausto-Korpsvart) | both sides alive |
+| Materia | `kvantum-theme-materia` | `materia-gtk-theme` | the only 100% official-repos pair; upstream quiet for years |
 
-Sin Kvantum empaquetado: Colloid, Graphite y Fluent (el de Fluent lleva
-huérfano desde 2020) — fuera hasta que alguien los empaquete.
+Without a packaged Kvantum half: Colloid, Graphite and Fluent (Fluent's has
+been orphaned since 2020) — out until someone packages them.
 
-### El escritorio de referencia (verificado 10-jul-2026)
+### The reference desktop (verified 2026-07-10)
 
-La combinación que este catálogo alimenta y que está corriendo en producción:
+The combination this catalogue feeds, running in production:
 DankMaterialShell + [dms-theme-sync ≥ 0.7](https://github.com/arqueon/dms-theme-sync)
-con su ruta de sincronización **Automatic**, `qt6ct-kde` en lugar de qt6ct, y
-Kvantum con la pareja del tema GTK activo. Con eso la ruta se resuelve sola en
-cada apply: pareja Kvantum si existe → Kvantum renderizado de la paleta DMS →
-paleta vía qt6ct-kde → seguir a GTK. El plugin detecta qué hay instalado (sonda
-`--probe-qt`) y diagnostica lo que falte — incluida la trampa silenciosa de que
-el qt6ct de fábrica no sabe leer `DankMatugen.colors` y deja las apps Qt con la
-paleta por defecto sin decir nada.
+with its **Automatic** sync path, `qt6ct-kde` instead of qt6ct, and Kvantum
+with the pair of the active GTK theme. With that, the path resolves itself on
+every apply: Kvantum pair if it exists → Kvantum rendering of the DMS
+palette → palette via qt6ct-kde → follow GTK. The plugin detects what is
+installed (the `--probe-qt` probe) and diagnoses whatever is missing —
+including the silent trap that stock qt6ct cannot read `DankMatugen.colors`
+and leaves Qt apps on the default palette without saying a word.
 
-### Opcionales documentados (`optdepends`)
+### Documented optionals (`optdepends`)
 
-No los instala nada; son el menú curado de alternativas, con su porqué en el
-`PKGBUILD`:
+Nothing installs these; they are the curated menu of alternatives, each with
+its rationale in the `PKGBUILD`:
 
-| Ámbito | Paquetes |
+| Scope | Packages |
 |---|---|
-| Iconos | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (acentos Catppuccin para Papirus) · `morewaita-icon-theme`\* (suma apps sobre Adwaita sin sustituirla; AUR del propio autor) · `adwaita-colors-icon-theme`\* (carpetas con acento GNOME 47+) · `vimix-icon-theme`\* · `whitesur-icon-theme-git`\* |
-| Temas GTK | `catppuccin-gtk-theme-git`\* (el vivo; ver `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · familia Fausto-Korpsvart por paleta: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
-| Kvantum (en `unified`) | `kvantum-qt5` · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
-| Qt | `qt6ct-kde`\* (sustituto directo de qt6ct con parches para apps KDE; en evaluación para dms-theme-sync) · `qt6-tools` (trae `qtdiag`, que usa dms-theme-sync) |
-| Cursores | `catppuccin-cursors-latte`\* (modo claro) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` · `vimix-cursors` (oficial, vinceliuice) · `nordzy-cursors`\* · `xcursor-simp1e`\* · `googledot-cursor-theme`\* · `notwaita-cursor-theme`\* — alias XCursor de estos cinco sin auditar aún |
-| Fuentes | `maplemono-nf`\* · `maplemono-variable`\* · `ttf-monaspace-variable` (sustituye a `otf-monaspace`: ejes variables, repo oficial) · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (para terminales sin *font fallback*) · `adwaita-fonts` · `otf-geist-mono-nerd` · `ttf-geist`\* · `ttf-geist-mono-variable`\* · `otf-intel-one-mono`† · `ttf-commit-mono`\* · `ttf-0xproto`\* · `ttf-manrope`\* |
-| Login/arranque (en `login`) | `sddm-silent-theme`\* · `where-is-my-sddm-theme-git`\* · `plymouth-theme-catppuccin-mocha-git`\* |
+| Icons | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (Catppuccin accents for Papirus) · `morewaita-icon-theme`\* (adds apps on top of Adwaita without replacing it; AUR by the author himself) · `adwaita-colors-icon-theme`\* (GNOME 47+ accent folders) · `vimix-icon-theme`\* · `whitesur-icon-theme-git`\* |
+| GTK themes | `catppuccin-gtk-theme-git`\* (the live one; see `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · the Fausto-Korpsvart family by palette: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
+| Kvantum (in `unified`) | `kvantum-qt5` · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
+| Qt | `qt6ct-kde`\* (drop-in replacement for qt6ct with patches for KDE apps; under evaluation for dms-theme-sync) · `qt6-tools` (brings `qtdiag`, which dms-theme-sync uses) |
+| Cursors | `catppuccin-cursors-latte`\* (light mode) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` · `vimix-cursors` (official, vinceliuice) · `nordzy-cursors`\* · `xcursor-simp1e`\* · `googledot-cursor-theme`\* · `notwaita-cursor-theme`\* — the XCursor alias sets of these last five not audited yet |
+| Fonts | `maplemono-nf`\* · `maplemono-variable`\* · `ttf-monaspace-variable` (replaces `otf-monaspace`: variable axes, official repo) · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (for terminals without *font fallback*) · `adwaita-fonts` · `otf-geist-mono-nerd` · `ttf-geist`\* · `ttf-geist-mono-variable`\* · `otf-intel-one-mono`† · `ttf-commit-mono`\* · `ttf-0xproto`\* · `ttf-manrope`\* |
+| Login/boot (in `login`) | `sddm-silent-theme`\* · `where-is-my-sddm-theme-git`\* · `plymouth-theme-catppuccin-mocha-git`\* |
 
-### Aparte, por diseño: los pares tipográficos
+### Separate by design: the typographic pairs
 
-El meta **no** incluye `arqueon-desktop-fonts-pairings`: son fuentes de
-maquetación, no del escritorio. Los dos pares son **Archivo + Archivo Narrow +
-Piazzolla** y **Libre Franklin + Source Serif 4 + Spline Sans Mono**; hasta
-ahora vivían como ficheros sueltos en `~/.local/share/fonts`, y las seis
-familias resultan estar empaquetadas — en builds variables, que es lo que eran
-los ficheros sueltos. Instálalo aparte si hace falta:
+The meta does **not** include `arqueon-desktop-fonts-pairings`: those are
+layout fonts, not desktop fonts. The two pairs are **Archivo + Archivo
+Narrow + Piazzolla** and **Libre Franklin + Source Serif 4 + Spline Sans
+Mono**; until now they lived as loose files in `~/.local/share/fonts`, and
+all six families turn out to be packaged — in variable builds, which is what
+the loose files were. Install it separately when needed:
 
 ```sh
 paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
   ttf-piazzolla-variable ttf-spline-sans-mono
-(cd recipes/otf-impallari-libre-franklin && makepkg)   # el del AUR no compila
+(cd recipes/otf-impallari-libre-franklin && makepkg)   # the AUR one doesn't build
 sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst \
   arqueon-desktop-fonts-pairings-*.pkg.tar.zst
 ```
 
-## Decisiones que conviene no reabrir
+## Decisions best not reopened
 
-**No hay tema GTK4.** libadwaita ignora `~/.themes` y `gtk-theme-name` por
-completo. Solo obedece las sobrescrituras de color en
-`~/.config/gtk-4.0/gtk.css` —que es lo que matugen escribe— y el
-`color-scheme` del portal. Cualquier cosa vendida como "tema GTK4" es
-decorativa.
+**There is no GTK4 theme.** libadwaita ignores `~/.themes` and
+`gtk-theme-name` entirely. It only obeys the color overrides in
+`~/.config/gtk-4.0/gtk.css` — which is what matugen writes — and the
+portal's `color-scheme`. Anything sold as a "GTK4 theme" is decorative.
 
-**Gradience y `catppuccin/gtk` están muertos.** El primero archivado en julio de
-2024 y fuera del AUR; el segundo archivado *deliberadamente* en junio de 2024
-("GTK is a nightmare to consistently theme", issue #262). Ojo con el paquete
-`catppuccin-gtk-theme-mocha`, que sigue apuntando al repo muerto: el vivo es
-`catppuccin-gtk-theme-git`, de Fausto-Korpsvart — cuya familia (9 paletas bajo
-un autor: Catppuccin, Gruvbox, Tokyo Night, Rosé Pine, Everforest, Nightfox,
-Kanagawa, Solarized Osaka, Material) es el upstream vivo de referencia en 2026.
-También congelados y fuera: `dracula-gtk-theme` (2023) y `nordic-theme` (2022).
+**Gradience and `catppuccin/gtk` are dead.** The former archived in July
+2024 and gone from the AUR; the latter archived *deliberately* in June 2024
+("GTK is a nightmare to consistently theme", issue #262). Beware the
+`catppuccin-gtk-theme-mocha` package, which still points at the dead repo:
+the live one is `catppuccin-gtk-theme-git`, by Fausto-Korpsvart — whose
+family (9 palettes under one author: Catppuccin, Gruvbox, Tokyo Night, Rosé
+Pine, Everforest, Nightfox, Kanagawa, Solarized Osaka, Material) is the
+reference living upstream in 2026. Also frozen and out: `dracula-gtk-theme`
+(2023) and `nordic-theme` (2022).
 
-**Papirus, y no otro, como set de trabajo.** Tiene la mejor cobertura para una
-mezcla de GTK, Qt y Electron, y es el único que trae ~80 colores de carpeta en
-un solo paquete, recoloreables por CLI. Tela, Colloid y compañía vuelven al
-modelo de "un paquete por color".
+**Papirus, and nothing else, as the working set.** It has the best coverage
+for a mix of GTK, Qt and Electron apps, and it is the only one shipping ~80
+folder colors in a single package, recolorable via CLI. Tela, Colloid and
+friends fall back to the "one package per color" model.
 
-**Adwaita y Breeze no son decoración.** GTK y Qt caen en ellos cuando a un tema
-le falta un icono. Se quedan siempre instalados.
+**Adwaita and Breeze are not decoration.** GTK and Qt fall back to them when
+a theme is missing an icon. They stay installed, always.
 
-**Nerd Fonts por fallback, no parcheando.** `ttf-nerd-fonts-symbols` más una
-regla de fontconfig sirve los glifos de iconos sin duplicar familias ni perder
-ligaduras y ejes variables. Instalar fuentes parcheadas solo tiene sentido para
-terminales sin *font fallback*.
+**Nerd Fonts via fallback, not patching.** `ttf-nerd-fonts-symbols` plus one
+fontconfig rule serves the icon glyphs without duplicating families or
+losing ligatures and variable axes. Installing patched fonts only makes
+sense for terminals without *font fallback*.
 
-**Cursores Catppuccin.** Están generados desde el SVG de Bibata, así que el
-juego de alias XCursor está completo — un juego incompleto es lo que hace que
-Qt y Electron caigan en la flecha de X11. Los 16 acentos vienen en un paquete,
-que es el único "recoloreado" posible: los temas XCursor son mapas de bits
-pre-renderizados por tamaño y no se pueden teñir en caliente.
+**Catppuccin cursors.** They are generated from Bibata's SVG source, so the
+XCursor alias set is complete — an incomplete alias set is what makes Qt and
+Electron fall back to the X11 arrow. All 16 accents come in one package,
+which is the only "recoloring" possible: XCursor themes are bitmaps
+pre-rendered per size and cannot be tinted on the fly.
 
-**`hyprcursor` no sirve en niri**, que dibuja el cursor por XCursor.
+**`hyprcursor` is useless on niri**, which draws the cursor via XCursor.
 
-**`ttf-ms-fonts` queda fuera.** Su EULA prohíbe redistribuir. `ttf-liberation`
-es compatible en métricas y de licencia limpia.
+**`ttf-ms-fonts` stays out.** Its EULA forbids redistribution.
+`ttf-liberation` is metric-compatible and clean-licensed.
 
-**`kvantum` es opcional.** `qt6ct` con la paleta de matugen ya da consistencia
-de color; Kvantum solo añade widgets dibujados en SVG, y exige un tema propio.
-Elegir el estilo `kvantum` sin tenerlo instalado hace que Qt caiga en Fusion
-sin avisar.
+**`kvantum` is optional.** `qt6ct` with the matugen palette already gives
+color consistency; Kvantum only adds SVG-drawn widgets, and demands a theme
+of its own. Selecting the `kvantum` style without it installed makes Qt fall
+back to Fusion without warning.
 
-## `recipes/` — PKGBUILD corregidos
+## `recipes/` — fixed PKGBUILDs
 
-Paquetes del AUR que **no compilan** y hay que arreglar antes de poder
-depender de ellos. Cada receta explica el fallo y la corrección.
+AUR packages that **do not build** and need fixing before they can be
+depended on. Each recipe explains the failure and the fix.
 
-- `catppuccin-gtk-theme-git` — el `install.sh` de upstream acaba en una
-  "Session Integration" que aplica el tema a la sesión: llama a `xfconf-query`.
-  Dentro del fakeroot de `makepkg` no hay sesión ni D-Bus, y aborta con
-  `Failed to init libxfconf`. Antes de eso hace dos preguntas interactivas, que
-  un build tampoco debe hacer. El propio `install.sh` trae la salida
-  (`themes/install.sh:127`): con `BATCH_MODE=true` salta el menú y nunca llega
-  a la integración con la sesión. El PKGBUILD del AUR no la usa. Una línea.
+- `catppuccin-gtk-theme-git` — upstream's `install.sh` ends in a
+  "Session Integration" step that applies the theme to the session: it calls
+  `xfconf-query`. Inside makepkg's fakeroot there is no session and no
+  D-Bus, so it aborts with `Failed to init libxfconf`. Before that it asks
+  two interactive questions, which a build must not do either. The
+  `install.sh` itself provides the way out (`themes/install.sh:127`): with
+  `BATCH_MODE=true` it skips the menu and never reaches the session
+  integration. The AUR PKGBUILD doesn't use it. One line.
 
 ```sh
 cd recipes/catppuccin-gtk-theme-git && makepkg -si
 ```
 
-- `otf-impallari-libre-franklin` (y su mitad `ttf-`) — el PKGBUILD del AUR
-  descarga `archive/master.zip` — un objetivo móvil — y lo valida contra un md5
-  horneado en 2020. Upstream ha empujado desde entonces («Roman v3.007»,
-  sep-2025), así que el checksum no volverá a cuadrar jamás. La receta fija la
-  fuente al commit y pone `epoch=1` para que paru no la "actualice" de vuelta
-  al 4.015 roto (upstream renumeró versiones hacia abajo).
+- `otf-impallari-libre-franklin` (and its `ttf-` half) — the AUR PKGBUILD
+  downloads `archive/master.zip` — a moving target — and validates it
+  against an md5 baked in 2020. Upstream has pushed since ("Roman v3.007",
+  Sep 2025), so the checksum will never match again. The recipe pins the
+  source to the commit and sets `epoch=1` so paru doesn't "update" it back
+  to the broken 4.015 (upstream renumbered versions downwards).
 
 ```sh
 cd recipes/otf-impallari-libre-franklin && makepkg
 sudo pacman -U ttf-impallari-libre-franklin-*.pkg.tar.zst
 ```
 
-## Verificación
+## Verification
 
-Los nombres de paquete no se escriben de memoria. Antes de tocar el `PKGBUILD`:
+Package names are not written from memory. Before touching the `PKGBUILD`:
 
 ```sh
 makepkg --printsrcinfo > .SRCINFO
 awk -F' = ' '/^\tdepends|^\toptdepends/{print $2}' .SRCINFO |
   cut -d: -f1 | sort -u | grep -v '^arqueon-' |
   while IFS= read -r p; do
-    pacman -Si "$p" >/dev/null 2>&1 && { echo "oficial $p"; continue; }
+    pacman -Si "$p" >/dev/null 2>&1 && { echo "official $p"; continue; }
     c=$(curl -sf "https://aur.archlinux.org/rpc/?v=5&type=info&arg[]=$p" |
         grep -o '"resultcount":[0-9]*' | cut -d: -f2)
-    [ "${c:-0}" -gt 0 ] && echo "AUR     $p" || echo "FALTA   $p"
+    [ "${c:-0}" -gt 0 ] && echo "AUR     $p" || echo "MISSING $p"
   done
 ```
 
-Sirve de algo: `ttf-maplemono-nf` no existe (es `maplemono-nf`), y
-`surfn-horst-red-icons-git` tampoco está en el AUR pese a instalarse sin quejas
-desde un repo personal.
+It earns its keep: `ttf-maplemono-nf` does not exist (it's `maplemono-nf`),
+and `surfn-horst-red-icons-git` is not in the AUR either, despite installing
+without complaint from a personal repo.
