@@ -1,0 +1,26 @@
+From 915dda34d9cd43d1e81c6245a16d762860871ab6 Mon Sep 17 00:00:00 2001
+From: Intralexical <Intralexical@gmail.com>
+Date: Thu, 5 Jan 2023 22:04:57 +0000
+Subject: [PATCH] Disable broken tree header indicator
+
+Backport of https://github.com/vinceliuice/Matcha-kde/pull/5.
+The referenced `harrow` element renders a broken indicator in tree headers.
+---
+ Kvantum/Matcha-sea-dark/Matcha-sea-dark.kvconfig | 2 +-
+ Kvantum/Matcha-sea/Matcha-sea.kvconfig           | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Kvantum/Matcha-sea-dark/Matcha-sea-dark.kvconfig b/Kvantum/Matcha-sea-dark/Matcha-sea-dark.kvconfig
+index f3f6c97..3654df0 100644
+--- a/Kvantum/Matcha-sea-dark/Matcha-sea-dark.kvconfig
++++ b/Kvantum/Matcha-sea-dark/Matcha-sea-dark.kvconfig
+@@ -309 +309 @@ text.toggle.color=#ffffff
+-indicator.element=harrow
++#indicator.element=harrow
+diff --git a/Kvantum/Matcha-sea/Matcha-sea.kvconfig b/Kvantum/Matcha-sea/Matcha-sea.kvconfig
+index c4c0cd6..87e109f 100644
+--- a/Kvantum/Matcha-sea/Matcha-sea.kvconfig
++++ b/Kvantum/Matcha-sea/Matcha-sea.kvconfig
+@@ -309 +309 @@ text.toggle.color=#32343D
+-indicator.element=harrow
++#indicator.element=harrow

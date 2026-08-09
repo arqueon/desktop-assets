@@ -25,7 +25,7 @@ pkgname=(
   arqueon-desktop-login
 )
 pkgver=1.1.0
-pkgrel=2
+pkgrel=3
 pkgdesc="Curated desktop assets (meta packages)"
 arch=('any')
 url="https://github.com/arqueon/desktop-assets"
@@ -85,8 +85,13 @@ package_arqueon-desktop-themes() {
   # is gone from the AUR; catppuccin/gtk was archived in 2024-06 — the AUR
   # package catppuccin-gtk-theme-mocha still points at that dead repo, so use
   # catppuccin-gtk-theme-git (Fausto-Korpsvart), which is alive.
-  depends=(adw-gtk-theme)
+  # Breeze is the active reference theme, so keep its GTK half in the
+  # reproducible base instead of merely suggesting it as an optional.
+  depends=(adw-gtk-theme breeze-gtk)
   optdepends=(
+    'qogir-gtk-theme-git: GTK half of the same-author Qogir pair'
+    'lavanda-gtk-theme-git: GTK half of the same-author Lavanda pair'
+    'matcha-gtk-theme: GTK half of the same-author Matcha Sea pair'
     'catppuccin-gtk-theme-git: Catppuccin, 9 accents in light and dark'
     'colloid-gtk-theme-git: Material-flavoured, actively maintained'
     'orchis-theme: rounded Material theme (official repo)'
@@ -104,7 +109,7 @@ package_arqueon-desktop-themes() {
 }
 
 package_arqueon-desktop-unified() {
-  pkgdesc="Qt apps that pass for GTK: Kvantum with same-author theme pairs and Adwaita CSDs"
+  pkgdesc="Qt apps that pass for GTK: native/Kvantum theme pairs and Adwaita CSDs"
   # The Qt<->GTK unification axis (research verified 2026-07-10). KvLibadwaita
   # replicates libadwaita in Qt — the natural partner of adw-gtk3. Its author
   # declares maintenance paused (last push 2025-09), acceptable because the
@@ -113,18 +118,24 @@ package_arqueon-desktop-unified() {
   # from the AUR. qadwaitadecorations-qt6 draws Adwaita-style client-side
   # decorations, closing the last visible gap (window titlebars).
   #
-  # The optdepends are same-author Kvantum+GTK pairs, so both halves of the
-  # desktop are drawn from one design: WhiteSur and Orchis are vinceliuice
-  # (kvantum halves live in his -kde repos), Catppuccin's kvantum ships 56
-  # variants (4 flavours x 14 accents) matching Fausto-Korpsvart's GTK side.
-  # Materia is the only pair fully in official repos, but its upstream (nana-4)
-  # has been quiet for years — usable, not a pillar.
+  # Breeze is the native-QStyle exception: breeze (Qt6) + breeze5 (Qt5) pair
+  # with breeze-gtk without going through Kvantum. dms-theme-sync only chooses
+  # that route when both Qt generations are present, avoiding a Qt5 fallback to
+  # Fusion. The complete native pair is therefore part of the reproducible
+  # base. The optdepends are same-author Kvantum+GTK pairs, so both
+  # halves are drawn from one design. Qogir has separate light/dark variants;
+  # Lavanda currently offers one Kvantum variant for its light/dark GTK family.
+  # WhiteSur and Orchis are vinceliuice; Catppuccin ships 56 Kvantum variants.
+  # Materia is the only pair fully in official repos, but its upstream is quiet.
   #
   # No Kvantum for Colloid, Graphite or Fluent: their kvantum ports have no
   # AUR package (Fluent's is orphaned since 2020), so they stay out.
-  depends=(kvantum kvantum-theme-libadwaita-git qadwaitadecorations-qt6)
+  depends=(breeze breeze5 kvantum kvantum-theme-libadwaita-git qadwaitadecorations-qt6)
   optdepends=(
     'kvantum-qt5: Kvantum for the remaining Qt5 apps'
+    'kvantum-theme-qogir-git: pairs with qogir-gtk-theme-git (same author, light/dark variants)'
+    'kvantum-theme-lavanda-git: pairs with lavanda-gtk-theme-git (same author; one Kvantum variant)'
+    'kvantum-theme-matcha-git: pairs with matcha-gtk-theme; local maintained candidate recipe under recipes/'
     'kvantum-theme-whitesur-git: pairs with whitesur-gtk-theme-git (same author)'
     'kvantum-theme-orchis-git: pairs with orchis-theme (same author)'
     'kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git'
