@@ -1,0 +1,77 @@
+# Maintainer: Rubén García <arqueonautis@gmail.com>
+# Existing AUR package maintainer: phnt
+# Contributor: Mark Wagie <mark dot wagie at tutanota dot com>
+#
+# Local Kvantum-only maintenance candidate for Matcha. The upstream KDE theme
+# also contains Plasma, Aurorae and SDDM assets, but those are intentionally not
+# packaged here: the Plasma 6 port is a separate, substantially larger scope.
+#
+# The source is pinned to the last audited master commit. Updating _commit is an
+# explicit maintenance action, not an accidental moving-target build. The local
+# pkgrel=2 adds Matcha-kde PR #5, which disables a broken tree-header indicator:
+# https://github.com/vinceliuice/Matcha-kde/pull/5
+
+pkgname='kvantum-theme-matcha-git'
+_gitname='Matcha-kde'
+_commit='a3b247bcd6a4892d6b56716ecd495bb6c542fd4f'
+pkgver=r11.a3b247b
+pkgrel=2
+pkgdesc='Matcha Sea light and dark themes for Kvantum (maintained local candidate)'
+arch=('any')
+url='https://github.com/vinceliuice/Matcha-kde'
+license=('GPL-3.0-only')
+depends=('kvantum')
+makedepends=('git' 'libxml2')
+provides=('kvantum-theme-matcha')
+conflicts=('kvantum-theme-matcha' 'matcha-kde')
+source=(
+  "git+${url}.git#commit=${_commit}"
+  'fix-tree-header-indicator.patch'
+)
+sha256sums=(
+  'SKIP'
+  '9e21fdbadf41599843566f73bbe45752c80a2b1e224462111bd5992ee4bdfc97'
+)
+options=('!strip' '!debug')
+
+pkgver() {
+  cd "${_gitname}"
+  printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${_gitname}"
+  patch -Np1 -i "${srcdir}/fix-tree-header-indicator.patch"
+}
+
+check() {
+  cd "${_gitname}"
+
+  local theme config
+  for theme in Matcha-sea Matcha-sea-dark; do
+    config="Kvantum/${theme}/${theme}.kvconfig"
+    xmllint --noout "Kvantum/${theme}/${theme}.svg"
+    grep -Fqx '#indicator.element=harrow' "${config}"
+    if grep -Fqx 'indicator.element=harrow' "${config}"; then
+      printf 'broken tree-header indicator remains enabled in %s\n' "${config}" >&2
+      return 1
+    fi
+  done
+}
+
+package() {
+  cd "${_gitname}"
+
+  local theme
+  for theme in Matcha-sea Matcha-sea-dark; do
+    install -Dm644 "Kvantum/${theme}/${theme}.kvconfig" \
+      "${pkgdir}/usr/share/Kvantum/${theme}/${theme}.kvconfig"
+    install -Dm644 "Kvantum/${theme}/${theme}.svg" \
+      "${pkgdir}/usr/share/Kvantum/${theme}/${theme}.svg"
+  done
+
+  install -Dm644 README.md \
+    "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+  install -Dm644 LICENSE \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

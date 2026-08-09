@@ -57,8 +57,8 @@ Los paquetes marcados con `*` vienen del AUR; el resto, de repos oficiales.
 |---|---|
 | `arqueon-desktop-engine` | `matugen` (color dinámico Material You) · `papirus-folders`\* (recoloreo de carpetas por CLI) |
 | `arqueon-desktop-icons` | `papirus-icon-theme` (set de trabajo) · `adwaita-icon-theme` y `breeze-icons` (fallback obligado de GTK/Qt) |
-| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark`, el único GTK3 que sigue a libadwaita y que matugen recolorea bien |
-| `arqueon-desktop-unified` | `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicado en Qt, pareja natural de adw-gtk3) · `qadwaitadecorations-qt6`\* (CSD estilo Adwaita para ventanas Qt) |
+| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark` · `breeze-gtk` (mitad GTK de la pareja Breeze nativa) |
+| `arqueon-desktop-unified` | `breeze` (Qt6) + `breeze5` (Qt5) · `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicado en Qt) · `qadwaitadecorations-qt6`\* (CSD estilo Adwaita para ventanas Qt) |
 | `arqueon-desktop-qt` | `qt5ct` · `qt6ct` |
 | `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (los 16 acentos, alias XCursor completo) |
 | `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glifos por fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (cobertura) · `ttf-liberation` (métricas MS con licencia limpia) |
@@ -67,21 +67,33 @@ Los paquetes marcados con `*` vienen del AUR; el resto, de repos oficiales.
 † repo `cachyos` en CachyOS; AUR en Arch puro. Igual `otf-intel-one-mono` entre
 los opcionales.
 
-En total, la instalación base son 31 paquetes: los 9 metas y 22 dependencias
+En total, la instalación base son 34 paquetes: los 9 metas y 25 dependencias
 reales.
 
-### Las parejas Kvantum + GTK (por qué existe `unified`)
+### Las parejas Qt + GTK (por qué existe `unified`)
 
 Qt solo se ve *igual* que GTK cuando las dos mitades salen del mismo diseño
 (investigación verificada 10-jul-2026):
 
-| Pareja | Mitad Kvantum | Mitad GTK | Estado |
+| Pareja | Mitad Qt | Mitad GTK | Estado |
 |---|---|---|---|
+| **Breeze** | `breeze` (Qt6) + `breeze5` (Qt5), QStyle nativo | `breeze-gtk` | repos oficiales e instalada por los metas base; `dms-theme-sync` sólo la elige como pareja completa |
 | **Libadwaita** (la de casa) | `kvantum-theme-libadwaita-git`† | `adw-gtk-theme` | autor en pausa declarada (sep-2025); estable porque el look libadwaita no cambia |
+| Qogir | `kvantum-theme-qogir-git`\* | `qogir-gtk-theme-git`\* | mismo autor; variantes claras, oscuras y sólidas separadas |
+| Lavanda | `kvantum-theme-lavanda-git`\* | `lavanda-gtk-theme-git`\* | mismo autor y empaquetado; un solo Kvantum para la familia GTK clara/oscura |
+| Matcha | `kvantum-theme-matcha-git`\* | `matcha-gtk-theme`\* | mismo autor; candidato local sólo Kvantum con fuente fijada y corrección de cabecera de árbol |
 | WhiteSur | `kvantum-theme-whitesur-git`\* | `whitesur-gtk-theme-git`\* | vinceliuice, vivo (GTK jul-2026) |
 | Orchis | `kvantum-theme-orchis-git`\* | `orchis-theme` | vinceliuice, vivo |
 | Catppuccin | `kvantum-theme-catppuccin-git`\* (56 variantes) | `catppuccin-gtk-theme-git`\* (Fausto-Korpsvart) | vivos ambos lados |
 | Materia | `kvantum-theme-materia` | `materia-gtk-theme` | única 100 % repos oficiales; upstream quieto hace años |
+
+La mitad GTK de Matcha sigue mantenida, mientras que la rama `master` del
+repositorio KDE no cambia desde agosto de 2020. La receta local sólo Kvantum de
+`recipes/` fija el commit auditado, incorpora la corrección de cabecera de árbol
+del PR #5 y empaqueta únicamente `Matcha-sea`/`Matcha-sea-dark`. Las dos
+variantes cargan con Qt 6/Kvantum actual y DMS elige correctamente claro/oscuro.
+Es un candidato local, no una toma del paquete AUR; publicar exige coordinarse
+con su mantenedor actual.
 
 Sin Kvantum empaquetado: Colloid, Graphite y Fluent (el de Fluent lleva
 huérfano desde 2020) — fuera hasta que alguien los empaquete.
@@ -91,8 +103,9 @@ huérfano desde 2020) — fuera hasta que alguien los empaquete.
 La combinación que este catálogo alimenta y que está corriendo en producción:
 DankMaterialShell + [dms-theme-sync ≥ 0.7](https://github.com/arqueon/dms-theme-sync)
 con su ruta de sincronización **Automatic**, `qt6ct-kde` en lugar de qt6ct, y
-Kvantum con la pareja del tema GTK activo. Con eso la ruta se resuelve sola en
-cada apply: pareja Kvantum si existe → Kvantum renderizado de la paleta DMS →
+la pareja completa del tema GTK activo. Con eso la ruta se resuelve sola en
+cada apply: pareja Qt nativa (por ahora Breeze) → pareja Kvantum si existe →
+Kvantum renderizado de la paleta DMS →
 paleta vía qt6ct-kde → seguir a GTK. El plugin detecta qué hay instalado (sonda
 `--probe-qt`) y diagnostica lo que falte — incluida la trampa silenciosa de que
 el qt6ct de fábrica no sabe leer `DankMatugen.colors` y deja las apps Qt con la
@@ -106,8 +119,8 @@ No los instala nada; son el menú curado de alternativas, con su porqué en el
 | Ámbito | Paquetes |
 |---|---|
 | Iconos | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (acentos Catppuccin para Papirus) · `morewaita-icon-theme`\* (suma apps sobre Adwaita sin sustituirla; AUR del propio autor) · `adwaita-colors-icon-theme`\* (carpetas con acento GNOME 47+) · `vimix-icon-theme`\* · `whitesur-icon-theme-git`\* |
-| Temas GTK | `catppuccin-gtk-theme-git`\* (el vivo; ver `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · familia Fausto-Korpsvart por paleta: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
-| Kvantum (en `unified`) | `kvantum-qt5` · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
+| Temas GTK | `qogir-gtk-theme-git`\* · `lavanda-gtk-theme-git`\* · `matcha-gtk-theme`\* · `catppuccin-gtk-theme-git`\* (el vivo; ver `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · familia Fausto-Korpsvart por paleta: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
+| Parejas Qt (en `unified`) | `kvantum-qt5` · `kvantum-theme-qogir-git`\* · `kvantum-theme-lavanda-git`\* · `kvantum-theme-matcha-git`\* (candidato local; ver `recipes/`) · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
 | Qt | `qt6ct-kde`\* (sustituto directo de qt6ct con parches para apps KDE; en evaluación para dms-theme-sync) · `qt6-tools` (trae `qtdiag`, que usa dms-theme-sync) |
 | Cursores | `catppuccin-cursors-latte`\* (modo claro) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` · `vimix-cursors` (oficial, vinceliuice) · `nordzy-cursors`\* · `xcursor-simp1e`\* · `googledot-cursor-theme`\* · `notwaita-cursor-theme`\* — alias XCursor de estos cinco sin auditar aún |
 | Fuentes | `maplemono-nf`\* · `maplemono-variable`\* · `ttf-monaspace-variable` (sustituye a `otf-monaspace`: ejes variables, repo oficial) · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (para terminales sin *font fallback*) · `adwaita-fonts` · `otf-geist-mono-nerd` · `ttf-geist`\* · `ttf-geist-mono-variable`\* · `otf-intel-one-mono`† · `ttf-commit-mono`\* · `ttf-0xproto`\* · `ttf-manrope`\* |
@@ -176,10 +189,20 @@ de color; Kvantum solo añade widgets dibujados en SVG, y exige un tema propio.
 Elegir el estilo `kvantum` sin tenerlo instalado hace que Qt caiga en Fusion
 sin avisar.
 
-## `recipes/` — PKGBUILD corregidos
+## `recipes/` — PKGBUILD locales
 
-Paquetes del AUR que **no compilan** y hay que arreglar antes de poder
-depender de ellos. Cada receta explica el fallo y la corrección.
+Correcciones para paquetes AUR rotos y candidatos de mantenimiento con alcance
+estrecho. Cada receta explica su divergencia y la compuerta de publicación.
+
+- `kvantum-theme-matcha-git` — candidato de mantenimiento sólo Kvantum fijado
+  al commit `a3b247b` de Matcha-kde. Empaqueta la pareja Sea clara/oscura,
+  incorpora el PR #5, valida ambos SVG y excluye Plasma/SDDM todavía sin portar.
+  El paquete AUR existente tiene mantenedor: este candidato permanece local
+  hasta acordar una contribución o co-mantenimiento.
+
+```sh
+cd recipes/kvantum-theme-matcha-git && makepkg --cleanbuild --force --check
+```
 
 - `catppuccin-gtk-theme-git` — el `install.sh` de upstream acaba en una
   "Session Integration" que aplica el tema a la sesión: llama a `xfconf-query`.

@@ -4,3 +4,7 @@ pkg/
 *.pkg.tar.zst
 *.log
 *.zip
+
+# Local SmallDocs decisions and VCS source caches created by makepkg
+.sdocs/
+recipes/kvantum-theme-matcha-git/Matcha-kde/
