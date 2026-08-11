@@ -1,0 +1,21 @@
+# Maintainer: Rubén García <arqueonautis@gmail.com>
+
+pkgname=arqueon-desktop-fonts-pairings
+pkgver=1.1.1
+pkgrel=1
+pkgdesc="Two document typeface pairings (sans + serif + mono)"
+arch=('any')
+url="https://github.com/arqueon/desktop-assets"
+license=('MIT')
+depends=(
+  ttf-archivo-variable
+  ttf-archivo-narrow
+  ttf-piazzolla-variable
+  ttf-impallari-libre-franklin
+  adobe-source-serif-fonts
+  ttf-spline-sans-mono
+)
+
+package() {
+  :
+}

@@ -1,7 +1,7 @@
 pkgbase = arqueon-desktop-assets
 	pkgdesc = Curated desktop assets (meta packages)
-	pkgver = 1.1.0
-	pkgrel = 3
+	pkgver = 1.1.1
+	pkgrel = 1
 	url = https://github.com/arqueon/desktop-assets
 	arch = any
 	license = MIT
@@ -122,15 +122,6 @@ pkgname = arqueon-desktop-fonts
 	optdepends = ttf-commit-mono: neutral, spacing-tuned mono
 	optdepends = ttf-0xproto: distinctive-glyph mono, alive (2.502)
 	optdepends = ttf-manrope: geometric UI sans, alive (2026-05)
-
-pkgname = arqueon-desktop-fonts-pairings
-	pkgdesc = Two document typeface pairings (sans + serif + mono)
-	depends = ttf-archivo-variable
-	depends = ttf-archivo-narrow
-	depends = ttf-piazzolla-variable
-	depends = ttf-impallari-libre-franklin
-	depends = adobe-source-serif-fonts
-	depends = ttf-spline-sans-mono
 
 pkgname = arqueon-desktop-login
 	pkgdesc = Login and boot theming: SDDM and Plymouth (all optional)

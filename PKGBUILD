@@ -3,9 +3,9 @@
 # Reproducible desktop asset catalogue: icons, GTK/Qt themes, cursors and fonts.
 # Everything here resolves from the official repositories or the AUR — nothing
 # is fetched from a personal repo or built by hand. The install flow lives in
-# the README: pre-install the two hard AUR depends with paru, then makepkg and
+# the README: pre-install the four hard AUR depends with paru, then makepkg and
 # pacman -U the metas (paru -U is a pacman passthrough and cannot resolve AUR
-# dependencies; makepkg -si would install fonts-pairings, which stays separate).
+# dependencies). The optional fonts-pairings meta has its own recipe.
 #
 # Nothing is installed to $HOME and no configuration is written: the runtime
 # theme is chosen by DankMaterialShell and propagated by its dms-theme-sync
@@ -21,11 +21,10 @@ pkgname=(
   arqueon-desktop-qt
   arqueon-desktop-cursors
   arqueon-desktop-fonts
-  arqueon-desktop-fonts-pairings
   arqueon-desktop-login
 )
-pkgver=1.1.0
-pkgrel=3
+pkgver=1.1.1
+pkgrel=1
 pkgdesc="Curated desktop assets (meta packages)"
 arch=('any')
 url="https://github.com/arqueon/desktop-assets"
@@ -47,9 +46,8 @@ package_arqueon-desktop-assets() {
 
 package_arqueon-desktop-engine() {
   pkgdesc="Dynamic colour engine: Material You generation and folder recolouring"
-  # matugen emits the @define-color sets libadwaita honours; papirus-folders is
-  # the only single-package folder recolourer (every other theme ships one
-  # package per colour).
+  # Both implementations provide this virtual package. The Catppuccin variant
+  # conflicts with and replaces the stock one while satisfying this dependency.
   depends=(matugen papirus-folders)
 }
 
@@ -218,29 +216,6 @@ package_arqueon-desktop-fonts() {
     'ttf-commit-mono: neutral, spacing-tuned mono'
     'ttf-0xproto: distinctive-glyph mono, alive (2.502)'
     'ttf-manrope: geometric UI sans, alive (2026-05)'
-  )
-}
-
-package_arqueon-desktop-fonts-pairings() {
-  pkgdesc="Two document typeface pairings (sans + serif + mono)"
-  # These were carried around as loose files in ~/.local/share/fonts
-  # (direccion-a, direccion-c). Every one of them is packaged, so there is
-  # nothing to redistribute here — which also sidesteps having to ship the OFL
-  # text alongside the binaries.
-  #
-  # The variable builds are chosen deliberately: the loose files were variable
-  # (Archivo[wdth_wght], Piazzolla[opsz_wght], ...), and the static AUR packages
-  # would silently lose the axes.
-  #
-  # Pairing A: Archivo + Archivo Narrow + Piazzolla
-  # Pairing C: Libre Franklin + Source Serif 4 + Spline Sans Mono
-  depends=(
-    ttf-archivo-variable
-    ttf-archivo-narrow
-    ttf-piazzolla-variable
-    ttf-impallari-libre-franklin
-    adobe-source-serif-fonts
-    ttf-spline-sans-mono
   )
 }
 

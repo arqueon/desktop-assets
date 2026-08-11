@@ -8,19 +8,44 @@ desktop (CachyOS + niri + DankMaterialShell).
 Everything resolves from **official repos or the AUR**. Nothing comes from a
 personal repo or a manual build, so on a fresh machine this is enough:
 
+### Base installation
+
+The simplest route is to download the installer, inspect it, and run it:
+
+```sh
+curl -fLO https://raw.githubusercontent.com/arqueon/desktop-assets/master/install.sh
+less install.sh
+bash install.sh             # base desktop
+bash install.sh --all       # base + DMS integration + font pairings
+```
+
+Available options are `--dms`, `--fonts`, and `--stock-papirus`. The last one
+uses the stock Papirus colours instead of the Catppuccin variant. The script
+works in a temporary directory and retains the normal `paru`, `pacman`, and
+`sudo` confirmations; do not run it as root.
+
+The equivalent manual installation is:
+
 ```sh
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
-paru -S --needed --asdeps papirus-folders catppuccin-cursors-mocha \
+paru -S --needed --asdeps papirus-folders-catppuccin-git catppuccin-cursors-mocha \
   qadwaitadecorations-qt6 kvantum-theme-libadwaita-git
-makepkg
-sudo pacman -U arqueon-desktop-{assets,engine,icons,themes,unified,qt,cursors,fonts,login}-*.pkg.tar.zst
+makepkg -si
 ```
 
 The first step exists because those four are the only hard *depends* that
 live in the AUR; everything else comes from official repos and `pacman -U`
 pulls it in by itself. (On CachyOS, `kvantum-theme-libadwaita-git` ships in
 the `cachyos` repo and paru takes it from there without building.)
+
+`papirus-folders-catppuccin-git` provides the same `papirus-folders` command
+as the stock package and intentionally conflicts with it. If paru asks to
+replace/remove `papirus-folders`, answer `y`. To keep the stock colours
+instead, install `papirus-folders` in the first command and do not install the
+Catppuccin variant; never install both.
+
+### Optional integrations
 
 A fifth step, optional but recommended if the desktop is DMS:
 
@@ -35,12 +60,11 @@ And for the Kvantum↔GTK pairing of whichever theme you use, its other half:
 paru -S --asdeps kvantum-theme-catppuccin-git   # or -whitesur-git, -orchis-git…
 ```
 
-**Neither `paru -U` nor `makepkg -si` work here** (verified 2026-07-10 with
-paru 2.1.0): `paru -U` is a *passthrough* to `pacman -U` and does not resolve
-AUR dependencies — it silently installs only the metas whose dependencies are
-already present and leaves the rest out. And `makepkg -si` installs **all**
-subpackages of the split, including `fonts-pairings`, which by design ships
-separately.
+**`paru -U` does not work here** (verified 2026-07-10 with paru 2.1.0): it is a
+*passthrough* to `pacman -U` and does not resolve AUR dependencies. Pre-install
+the four AUR dependencies above, then use `makepkg -si` or the explicit
+`pacman -U` command. The optional `fonts-pairings` meta has its own recipe, so
+it cannot block installation or upgrades of the base split package.
 
 The packages are **empty**: they only declare dependencies. They install
 nothing into `$HOME` and write no configuration. Which theme is in use at any
@@ -140,9 +164,14 @@ the loose files were. Install it separately when needed:
 paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
   ttf-piazzolla-variable ttf-spline-sans-mono
 (cd recipes/otf-impallari-libre-franklin && makepkg)   # the AUR one doesn't build
-sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst \
-  arqueon-desktop-fonts-pairings-*.pkg.tar.zst
+sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst
+(cd recipes/arqueon-desktop-fonts-pairings && makepkg -si)
 ```
+
+To update after pulling new repository changes, repeat the AUR prerequisite
+command and run `makepkg -si` at the repository root. Update the separate font
+pairings only if you installed them. Old package files in the working tree are
+not installation targets and may be removed after a successful upgrade.
 
 ## Decisions best not reopened
 
