@@ -8,19 +8,44 @@ escritorio (CachyOS + niri + DankMaterialShell).
 Todo se resuelve desde **repos oficiales o el AUR**. Nada viene de un repo
 personal ni se compila a mano, así que en una máquina nueva basta:
 
+### Instalación base
+
+La forma más sencilla es descargar el instalador, revisarlo y ejecutarlo:
+
+```sh
+curl -fLO https://raw.githubusercontent.com/arqueon/desktop-assets/master/install.sh
+less install.sh
+bash install.sh             # escritorio base
+bash install.sh --all       # base + integración DMS + pares tipográficos
+```
+
+Opciones disponibles: `--dms`, `--fonts` y `--stock-papirus`. Esta última usa
+los colores normales de Papirus en vez de la variante Catppuccin. El script
+trabaja en un directorio temporal y pide confirmación normalmente mediante
+`paru`, `pacman` y `sudo`; no debe ejecutarse como root.
+
+La instalación manual equivalente es:
+
 ```sh
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
-paru -S --needed --asdeps papirus-folders catppuccin-cursors-mocha \
+paru -S --needed --asdeps papirus-folders-catppuccin-git catppuccin-cursors-mocha \
   qadwaitadecorations-qt6 kvantum-theme-libadwaita-git
-makepkg
-sudo pacman -U arqueon-desktop-{assets,engine,icons,themes,unified,qt,cursors,fonts,login}-*.pkg.tar.zst
+makepkg -si
 ```
 
 El primer paso existe porque esas cuatro son las únicas *depends* duras que
 viven en el AUR; todo lo demás es de repos oficiales y `pacman -U` lo arrastra
 solo. (En CachyOS, `kvantum-theme-libadwaita-git` viene del repo `cachyos` y
 paru lo toma de ahí sin compilar.)
+
+`papirus-folders-catppuccin-git` proporciona el mismo comando
+`papirus-folders` que el paquete normal y entra en conflicto con él a propósito.
+Si paru pregunta si debe sustituir/eliminar `papirus-folders`, responde `y`. Si
+prefieres los colores normales, instala `papirus-folders` en el primer comando
+y no instales la variante Catppuccin; nunca se instalan los dos juntos.
+
+### Integraciones opcionales
 
 Un quinto paso, opcional pero recomendado si el escritorio es DMS:
 
@@ -35,11 +60,12 @@ Y para el emparejado Kvantum↔GTK del tema que uses, su media naranja:
 paru -S --asdeps kvantum-theme-catppuccin-git   # o -whitesur-git, -orchis-git…
 ```
 
-**Ni `paru -U` ni `makepkg -si` sirven aquí** (comprobado el 10-jul-2026 con
-paru 2.1.0): `paru -U` es un *passthrough* a `pacman -U` y no resuelve
-dependencias del AUR — instala en silencio solo los metas cuyas dependencias ya
-estén presentes y deja fuera el resto. Y `makepkg -si` instala **todos** los
-subpaquetes del split, incluido `fonts-pairings`, que por diseño va aparte.
+**`paru -U` no sirve aquí** (comprobado el 10-jul-2026 con paru 2.1.0): es un
+*passthrough* a `pacman -U` y no resuelve dependencias del AUR. Preinstala las
+cuatro dependencias AUR anteriores y después usa `makepkg -si` o el comando
+explícito de `pacman -U`. El meta opcional `fonts-pairings` tiene ahora su
+propia receta, así que no puede bloquear la instalación ni las actualizaciones
+del paquete base dividido.
 
 Los paquetes están **vacíos**: solo declaran dependencias. No instalan nada en
 `$HOME` ni escriben configuración. Qué tema se usa en cada momento lo decide
@@ -139,9 +165,15 @@ los ficheros sueltos. Instálalo aparte si hace falta:
 paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
   ttf-piazzolla-variable ttf-spline-sans-mono
 (cd recipes/otf-impallari-libre-franklin && makepkg)   # el del AUR no compila
-sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst \
-  arqueon-desktop-fonts-pairings-*.pkg.tar.zst
+sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst
+(cd recipes/arqueon-desktop-fonts-pairings && makepkg -si)
 ```
+
+Para actualizar después de traer cambios del repositorio, repite el comando de
+prerrequisitos AUR y ejecuta `makepkg -si` en la raíz. Actualiza por separado
+los pares tipográficos solo si los instalaste. Los paquetes antiguos que hayan
+quedado en el árbol no son objetivos de instalación y se pueden borrar después
+de una actualización correcta.
 
 ## Decisiones que conviene no reabrir
 
