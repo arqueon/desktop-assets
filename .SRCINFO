@@ -1,6 +1,6 @@
 pkgbase = arqueon-desktop-assets
 	pkgdesc = Curated desktop assets (meta packages)
-	pkgver = 1.1.1
+	pkgver = 1.2.0
 	pkgrel = 1
 	url = https://github.com/arqueon/desktop-assets
 	arch = any
@@ -21,6 +21,8 @@ pkgname = arqueon-desktop-engine
 	pkgdesc = Dynamic colour engine: Material You generation and folder recolouring
 	depends = matugen
 	depends = papirus-folders
+	depends = dconf
+	depends = xsettingsd
 
 pkgname = arqueon-desktop-icons
 	pkgdesc = Icon themes: Papirus as the working set, Adwaita/Breeze as fallback
@@ -42,6 +44,7 @@ pkgname = arqueon-desktop-themes
 	pkgdesc = GTK themes. GTK4/libadwaita takes colour only — see the note below
 	depends = adw-gtk-theme
 	depends = breeze-gtk
+	depends = gtk-engine-murrine
 	optdepends = qogir-gtk-theme-git: GTK half of the same-author Qogir pair
 	optdepends = lavanda-gtk-theme-git: GTK half of the same-author Lavanda pair
 	optdepends = matcha-gtk-theme: GTK half of the same-author Matcha Sea pair
@@ -73,18 +76,17 @@ pkgname = arqueon-desktop-unified
 	optdepends = kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git
 	optdepends = kvantum-theme-materia: pairs with materia-gtk-theme, both official repos
 	optdepends = materia-gtk-theme: the GTK half of the Materia pair
-	optdepends = qt6ct-kde: the non-Kvantum half of the story — parses the KColorScheme palette DMS exports, which stock qt6ct silently cannot
 
 pkgname = arqueon-desktop-qt
 	pkgdesc = Qt5/Qt6 consistency on a non-KDE Wayland session
 	depends = qt5ct
-	depends = qt6ct
-	optdepends = qt6ct-kde: drop-in qt6ct (provides/conflicts it) that parses the KColorScheme palette DMS exports — dms-theme-sync 0.7 builds its kcolorscheme route on it
-	optdepends = qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load
+	depends = qt6ct-kde
+	depends = qt6-tools
 
 pkgname = arqueon-desktop-cursors
 	pkgdesc = Cursor themes
 	depends = catppuccin-cursors-mocha
+	depends = material-bibata-cursor
 	optdepends = catppuccin-cursors-latte: light-mode counterpart
 	optdepends = bibata-cursor-theme: the classic shape (upstream quiet since 2024)
 	optdepends = capitaine-cursors: neutral, complete, good at HiDPI

@@ -3,7 +3,7 @@
 # Reproducible desktop asset catalogue: icons, GTK/Qt themes, cursors and fonts.
 # Everything here resolves from the official repositories or the AUR — nothing
 # is fetched from a personal repo or built by hand. The install flow lives in
-# the README: pre-install the four hard AUR depends with paru, then makepkg and
+# the README: pre-install the five hard AUR depends with paru, then makepkg and
 # pacman -U the metas (paru -U is a pacman passthrough and cannot resolve AUR
 # dependencies). The optional fonts-pairings meta has its own recipe.
 #
@@ -23,7 +23,7 @@ pkgname=(
   arqueon-desktop-fonts
   arqueon-desktop-login
 )
-pkgver=1.1.1
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="Curated desktop assets (meta packages)"
 arch=('any')
@@ -48,7 +48,7 @@ package_arqueon-desktop-engine() {
   pkgdesc="Dynamic colour engine: Material You generation and folder recolouring"
   # Both implementations provide this virtual package. The Catppuccin variant
   # conflicts with and replaces the stock one while satisfying this dependency.
-  depends=(matugen papirus-folders)
+  depends=(matugen papirus-folders dconf xsettingsd)
 }
 
 package_arqueon-desktop-icons() {
@@ -85,7 +85,7 @@ package_arqueon-desktop-themes() {
   # catppuccin-gtk-theme-git (Fausto-Korpsvart), which is alive.
   # Breeze is the active reference theme, so keep its GTK half in the
   # reproducible base instead of merely suggesting it as an optional.
-  depends=(adw-gtk-theme breeze-gtk)
+  depends=(adw-gtk-theme breeze-gtk gtk-engine-murrine)
   optdepends=(
     'qogir-gtk-theme-git: GTK half of the same-author Qogir pair'
     'lavanda-gtk-theme-git: GTK half of the same-author Lavanda pair'
@@ -139,7 +139,6 @@ package_arqueon-desktop-unified() {
     'kvantum-theme-catppuccin-git: 56 variants, pairs with catppuccin-gtk-theme-git'
     'kvantum-theme-materia: pairs with materia-gtk-theme, both official repos'
     'materia-gtk-theme: the GTK half of the Materia pair'
-    'qt6ct-kde: the non-Kvantum half of the story — parses the KColorScheme palette DMS exports, which stock qt6ct silently cannot'
   )
 }
 
@@ -148,11 +147,9 @@ package_arqueon-desktop-qt() {
   # QT_QPA_PLATFORMTHEME=qt6ct plus the palette DMS writes to
   # ~/.config/qt6ct/colors/. Never QT_QPA_PLATFORMTHEME=kde outside Plasma.
   # Kvantum and the CSD plugin moved to arqueon-desktop-unified.
-  depends=(qt5ct qt6ct)
-  optdepends=(
-    'qt6ct-kde: drop-in qt6ct (provides/conflicts it) that parses the KColorScheme palette DMS exports — dms-theme-sync 0.7 builds its kcolorscheme route on it'
-    'qt6-tools: provides qtdiag, which dms-theme-sync uses to list the platform themes and styles Qt can load'
-  )
+  # dms-theme-sync needs qt6ct-kde rather than stock qt6ct to consume the
+  # KColorScheme palette exported by DMS. It provides/conflicts with qt6ct.
+  depends=(qt5ct qt6ct-kde qt6-tools)
 }
 
 package_arqueon-desktop-cursors() {
@@ -164,7 +161,7 @@ package_arqueon-desktop-cursors() {
   # and cannot be tinted at runtime.
   #
   # hyprcursor is pointless on niri, which renders the cursor through XCursor.
-  depends=(catppuccin-cursors-mocha)
+  depends=(catppuccin-cursors-mocha material-bibata-cursor)
   optdepends=(
     'catppuccin-cursors-latte: light-mode counterpart'
     'bibata-cursor-theme: the classic shape (upstream quiet since 2024)'

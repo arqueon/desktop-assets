@@ -19,10 +19,16 @@ bash install.sh             # escritorio base
 bash install.sh --all       # base + integración DMS + pares tipográficos
 ```
 
-Opciones disponibles: `--dms`, `--fonts` y `--stock-papirus`. Esta última usa
-los colores normales de Papirus en vez de la variante Catppuccin. El script
-trabaja en un directorio temporal y pide confirmación normalmente mediante
-`paru`, `pacman` y `sudo`; no debe ejecutarse como root.
+Opciones disponibles: `--dms`, `--fonts` y `--stock-papirus`. `--dms` añade la
+pareja Kvantum/GTK Catppuccin; la base ya incluye los componentes de
+sincronización automática. La última opción usa los colores normales de Papirus
+en vez de la variante Catppuccin. El script trabaja en un directorio temporal y
+pide confirmación normalmente mediante `paru`, `pacman` y `sudo`; no debe
+ejecutarse como root.
+
+Las 28 variantes Material Bibata se renderizan durante la instalación y ocupan
+unos 550 MiB instaladas. Es una compilación única salvo que se actualicen las
+fuentes fijadas de la receta.
 
 La instalación manual equivalente es:
 
@@ -30,11 +36,12 @@ La instalación manual equivalente es:
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
 paru -S --needed --asdeps papirus-folders-catppuccin-git catppuccin-cursors-mocha \
-  qadwaitadecorations-qt6 kvantum-theme-libadwaita-git
+  qadwaitadecorations-qt6 kvantum-theme-libadwaita-git qt6ct-kde
+(cd recipes/material-bibata-cursor && makepkg -si)
 makepkg -si
 ```
 
-El primer paso existe porque esas cuatro son las únicas *depends* duras que
+El primer paso existe porque esas cinco son las únicas *depends* duras que
 viven en el AUR; todo lo demás es de repos oficiales y `pacman -U` lo arrastra
 solo. (En CachyOS, `kvantum-theme-libadwaita-git` viene del repo `cachyos` y
 paru lo toma de ahí sin compilar.)
@@ -47,23 +54,21 @@ y no instales la variante Catppuccin; nunca se instalan los dos juntos.
 
 ### Integraciones opcionales
 
-Un quinto paso, opcional pero recomendado si el escritorio es DMS:
+`qt6ct-kde`, `qt6-tools`, `xsettingsd`, `dconf`, Murrine y las 28 variantes
+`Bibata-Material-*` forman ahora parte de la instalación base porque completan
+las rutas de sincronización automática de `dms-theme-sync`.
+
+Una pareja visual adicional opcional es:
 
 ```sh
-paru -S qt6ct-kde        # sustituye a qt6ct (provides/conflicts): mismo qt6ct,
-                         # pero capaz de leer la paleta KColorScheme que DMS exporta
-```
-
-Y para el emparejado Kvantum↔GTK del tema que uses, su media naranja:
-
-```sh
-paru -S --asdeps kvantum-theme-catppuccin-git   # o -whitesur-git, -orchis-git…
+paru -S --asdeps kvantum-theme-catppuccin-git catppuccin-gtk-theme-git
 ```
 
 **`paru -U` no sirve aquí** (comprobado el 10-jul-2026 con paru 2.1.0): es un
 *passthrough* a `pacman -U` y no resuelve dependencias del AUR. Preinstala las
-cuatro dependencias AUR anteriores y después usa `makepkg -si` o el comando
-explícito de `pacman -U`. El meta opcional `fonts-pairings` tiene ahora su
+cinco dependencias AUR anteriores, instala la receta Bibata y después usa
+`makepkg -si` o el comando explícito de `pacman -U`. El meta opcional
+`fonts-pairings` tiene ahora su
 propia receta, así que no puede bloquear la instalación ni las actualizaciones
 del paquete base dividido.
 
@@ -81,19 +86,19 @@ Los paquetes marcados con `*` vienen del AUR; el resto, de repos oficiales.
 
 | Metapaquete | Assets |
 |---|---|
-| `arqueon-desktop-engine` | `matugen` (color dinámico Material You) · `papirus-folders`\* (recoloreo de carpetas por CLI) |
+| `arqueon-desktop-engine` | `matugen` (color dinámico Material You) · `papirus-folders`\* (recoloreo de carpetas por CLI) · `dconf` · `xsettingsd` |
 | `arqueon-desktop-icons` | `papirus-icon-theme` (set de trabajo) · `adwaita-icon-theme` y `breeze-icons` (fallback obligado de GTK/Qt) |
-| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark` · `breeze-gtk` (mitad GTK de la pareja Breeze nativa) |
+| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark` · `breeze-gtk` (mitad GTK de la pareja Breeze nativa) · `gtk-engine-murrine` (temas GTK2) |
 | `arqueon-desktop-unified` | `breeze` (Qt6) + `breeze5` (Qt5) · `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicado en Qt) · `qadwaitadecorations-qt6`\* (CSD estilo Adwaita para ventanas Qt) |
-| `arqueon-desktop-qt` | `qt5ct` · `qt6ct` |
-| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (los 16 acentos, alias XCursor completo) |
+| `arqueon-desktop-qt` | `qt5ct` · `qt6ct-kde`\* · `qt6-tools` / `qtdiag` |
+| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (los 16 acentos, alias XCursor completo) · `material-bibata-cursor` (receta local, 28 variantes para el acento automático) |
 | `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glifos por fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (cobertura) · `ttf-liberation` (métricas MS con licencia limpia) |
 | `arqueon-desktop-login` | (vacío: solo documenta opcionales de SDDM/Plymouth) |
 
 † repo `cachyos` en CachyOS; AUR en Arch puro. Igual `otf-intel-one-mono` entre
 los opcionales.
 
-En total, la instalación base son 34 paquetes: los 9 metas y 25 dependencias
+En total, la instalación base son 39 paquetes: los 9 metas y 30 dependencias
 reales.
 
 ### Las parejas Qt + GTK (por qué existe `unified`)
@@ -147,7 +152,6 @@ No los instala nada; son el menú curado de alternativas, con su porqué en el
 | Iconos | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (acentos Catppuccin para Papirus) · `morewaita-icon-theme`\* (suma apps sobre Adwaita sin sustituirla; AUR del propio autor) · `adwaita-colors-icon-theme`\* (carpetas con acento GNOME 47+) · `vimix-icon-theme`\* · `whitesur-icon-theme-git`\* |
 | Temas GTK | `qogir-gtk-theme-git`\* · `lavanda-gtk-theme-git`\* · `matcha-gtk-theme`\* · `catppuccin-gtk-theme-git`\* (el vivo; ver `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · familia Fausto-Korpsvart por paleta: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
 | Parejas Qt (en `unified`) | `kvantum-qt5` · `kvantum-theme-qogir-git`\* · `kvantum-theme-lavanda-git`\* · `kvantum-theme-matcha-git`\* (candidato local; ver `recipes/`) · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
-| Qt | `qt6ct-kde`\* (sustituto directo de qt6ct con parches para apps KDE; en evaluación para dms-theme-sync) · `qt6-tools` (trae `qtdiag`, que usa dms-theme-sync) |
 | Cursores | `catppuccin-cursors-latte`\* (modo claro) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` · `vimix-cursors` (oficial, vinceliuice) · `nordzy-cursors`\* · `xcursor-simp1e`\* · `googledot-cursor-theme`\* · `notwaita-cursor-theme`\* — alias XCursor de estos cinco sin auditar aún |
 | Fuentes | `maplemono-nf`\* · `maplemono-variable`\* · `ttf-monaspace-variable` (sustituye a `otf-monaspace`: ejes variables, repo oficial) · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (para terminales sin *font fallback*) · `adwaita-fonts` · `otf-geist-mono-nerd` · `ttf-geist`\* · `ttf-geist-mono-variable`\* · `otf-intel-one-mono`† · `ttf-commit-mono`\* · `ttf-0xproto`\* · `ttf-manrope`\* |
 | Login/arranque (en `login`) | `sddm-silent-theme`\* · `where-is-my-sddm-theme-git`\* · `plymouth-theme-catppuccin-mocha-git`\* |
@@ -225,6 +229,16 @@ sin avisar.
 
 Correcciones para paquetes AUR rotos y candidatos de mantenimiento con alcance
 estrecho. Cada receta explica su divergencia y la compuerta de publicación.
+
+- `material-bibata-cursor` — compila de forma reproducible las 28 variantes de
+  acento `Bibata-Material-*` que usa dms-theme-sync. Tanto el generador de
+  colores como las fuentes de Bibata quedan fijados, y el resultado se instala
+  globalmente en `/usr/share/icons` en vez de dejar archivos sueltos en
+  `~/.icons`.
+
+```sh
+cd recipes/material-bibata-cursor && makepkg -si
+```
 
 - `kvantum-theme-matcha-git` — candidato de mantenimiento sólo Kvantum fijado
   al commit `a3b247b` de Matcha-kde. Empaqueta la pareja Sea clara/oscura,

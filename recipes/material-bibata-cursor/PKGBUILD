@@ -1,0 +1,35 @@
+# Maintainer: Rubén García <arqueonautis@gmail.com>
+
+pkgname=material-bibata-cursor
+pkgver=0.1.0.r0.g66bbecb
+pkgrel=1
+pkgdesc="28 Bibata cursor themes coloured with Material Design 3 accents"
+arch=('any')
+url="https://github.com/SakibShahariar/material-bibata-cursor"
+license=('GPL-3.0-or-later')
+makedepends=('fish' 'git' 'jq' 'librsvg' 'python' 'xorg-xcursorgen')
+source=(
+  "material-bibata-cursor::git+https://github.com/SakibShahariar/material-bibata-cursor.git#commit=66bbecb3f04bcc42af50bfc1e60b5c2366a18837"
+  "bibata_cursor::git+https://github.com/rtgiskard/bibata_cursor.git#commit=f4ccfe8abb63fddc7b3ce51a866fd8378395cb3d"
+)
+sha256sums=('SKIP' 'SKIP')
+
+prepare() {
+  rm -rf material-bibata-cursor/scripts/bibata_cursor
+  ln -s "$srcdir/bibata_cursor" material-bibata-cursor/scripts/bibata_cursor
+}
+
+build() {
+  cd material-bibata-cursor
+  BIBATA_MATERIAL_INSTALL_DIR="$srcdir/material-cursors" \
+    fish scripts/compile_bibata_material.fish
+}
+
+package() {
+  install -d "$pkgdir/usr/share/icons"
+  cp -a "$srcdir"/material-cursors/Bibata-Material-* "$pkgdir/usr/share/icons/"
+  install -Dm644 material-bibata-cursor/LICENSE \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE.material-bibata-cursor"
+  install -Dm644 bibata_cursor/readme.adoc \
+    "$pkgdir/usr/share/doc/$pkgname/README.bibata.adoc"
+}
