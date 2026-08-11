@@ -19,10 +19,15 @@ bash install.sh             # base desktop
 bash install.sh --all       # base + DMS integration + font pairings
 ```
 
-Available options are `--dms`, `--fonts`, and `--stock-papirus`. The last one
-uses the stock Papirus colours instead of the Catppuccin variant. The script
-works in a temporary directory and retains the normal `paru`, `pacman`, and
-`sudo` confirmations; do not run it as root.
+Available options are `--dms`, `--fonts`, and `--stock-papirus`. `--dms` adds
+the Catppuccin Kvantum/GTK pair; the base already contains the automatic-sync
+components. The last option uses the stock Papirus colours instead of the
+Catppuccin variant. The script works in a temporary directory and retains the
+normal `paru`, `pacman`, and `sudo` confirmations; do not run it as root.
+
+The 28 Material Bibata variants are rendered during installation and occupy
+about 550 MiB installed. This is a one-time build unless the pinned recipe is
+updated.
 
 The equivalent manual installation is:
 
@@ -30,11 +35,12 @@ The equivalent manual installation is:
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
 paru -S --needed --asdeps papirus-folders-catppuccin-git catppuccin-cursors-mocha \
-  qadwaitadecorations-qt6 kvantum-theme-libadwaita-git
+  qadwaitadecorations-qt6 kvantum-theme-libadwaita-git qt6ct-kde
+(cd recipes/material-bibata-cursor && makepkg -si)
 makepkg -si
 ```
 
-The first step exists because those four are the only hard *depends* that
+The first step exists because those five are the only hard *depends* that
 live in the AUR; everything else comes from official repos and `pacman -U`
 pulls it in by itself. (On CachyOS, `kvantum-theme-libadwaita-git` ships in
 the `cachyos` repo and paru takes it from there without building.)
@@ -47,23 +53,21 @@ Catppuccin variant; never install both.
 
 ### Optional integrations
 
-A fifth step, optional but recommended if the desktop is DMS:
+`qt6ct-kde`, `qt6-tools`, `xsettingsd`, `dconf`, Murrine, and all 28
+`Bibata-Material-*` variants are now part of the base installation because they
+complete the automatic synchronization routes in `dms-theme-sync`.
+
+An additional optional visual pair is:
 
 ```sh
-paru -S qt6ct-kde        # replaces qt6ct (provides/conflicts): same qt6ct,
-                         # but able to read the KColorScheme palette DMS exports
-```
-
-And for the Kvantum↔GTK pairing of whichever theme you use, its other half:
-
-```sh
-paru -S --asdeps kvantum-theme-catppuccin-git   # or -whitesur-git, -orchis-git…
+paru -S --asdeps kvantum-theme-catppuccin-git catppuccin-gtk-theme-git
 ```
 
 **`paru -U` does not work here** (verified 2026-07-10 with paru 2.1.0): it is a
 *passthrough* to `pacman -U` and does not resolve AUR dependencies. Pre-install
-the four AUR dependencies above, then use `makepkg -si` or the explicit
-`pacman -U` command. The optional `fonts-pairings` meta has its own recipe, so
+the five AUR dependencies above, install the Bibata recipe, then use
+`makepkg -si` or the explicit `pacman -U` command. The optional
+`fonts-pairings` meta has its own recipe, so
 it cannot block installation or upgrades of the base split package.
 
 The packages are **empty**: they only declare dependencies. They install
@@ -81,19 +85,19 @@ Packages marked with `*` come from the AUR; the rest, from official repos.
 
 | Metapackage | Assets |
 |---|---|
-| `arqueon-desktop-engine` | `matugen` (Material You dynamic color) · `papirus-folders`\* (folder recoloring via CLI) |
+| `arqueon-desktop-engine` | `matugen` (Material You dynamic color) · `papirus-folders`\* (folder recoloring via CLI) · `dconf` · `xsettingsd` |
 | `arqueon-desktop-icons` | `papirus-icon-theme` (working set) · `adwaita-icon-theme` and `breeze-icons` (mandatory GTK/Qt fallback) |
-| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark` · `breeze-gtk` (GTK half of the native Breeze pair) |
+| `arqueon-desktop-themes` | `adw-gtk-theme` → `adw-gtk3` / `adw-gtk3-dark` · `breeze-gtk` (GTK half of the native Breeze pair) · `gtk-engine-murrine` (GTK2 themes) |
 | `arqueon-desktop-unified` | `breeze` (Qt6) + `breeze5` (Qt5) · `kvantum` · `kvantum-theme-libadwaita-git`† (KvLibadwaita: libadwaita replicated in Qt) · `qadwaitadecorations-qt6`\* (Adwaita-style CSD for Qt windows) |
-| `arqueon-desktop-qt` | `qt5ct` · `qt6ct` |
-| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (all 16 accents, complete XCursor alias set) |
+| `arqueon-desktop-qt` | `qt5ct` · `qt6ct-kde`\* · `qt6-tools` / `qtdiag` |
+| `arqueon-desktop-cursors` | `catppuccin-cursors-mocha`\* (all 16 accents, complete XCursor alias set) · `material-bibata-cursor` (local recipe, 28 variants for automatic accent matching) |
 | `arqueon-desktop-fonts` | `otf-cascadia-code` · `ttf-jetbrains-mono` · `ttf-nerd-fonts-symbols` (glyphs via fallback) · `ttf-roboto` · `inter-font` · `adobe-source-serif-fonts` · `noto-fonts` + `-cjk` + `-emoji` (coverage) · `ttf-liberation` (MS metrics with a clean license) |
 | `arqueon-desktop-login` | (empty: only documents SDDM/Plymouth optionals) |
 
 † `cachyos` repo on CachyOS; AUR on plain Arch. Same for `otf-intel-one-mono`
 among the optionals.
 
-In total, the base install is 34 packages: the 9 metas and 25 real
+In total, the base install is 39 packages: the 9 metas and 30 real
 dependencies.
 
 ### The Qt + GTK pairs (why `unified` exists)
@@ -146,7 +150,6 @@ its rationale in the `PKGBUILD`:
 | Icons | `tela-icon-theme`\* · `colloid-icon-theme-git`\* · `qogir-icon-theme-git`\* · `fluent-icon-theme-git`\* · `kora-icon-theme`\* · `papirus-folders-catppuccin-git`\* (Catppuccin accents for Papirus) · `morewaita-icon-theme`\* (adds apps on top of Adwaita without replacing it; AUR by the author himself) · `adwaita-colors-icon-theme`\* (GNOME 47+ accent folders) · `vimix-icon-theme`\* · `whitesur-icon-theme-git`\* |
 | GTK themes | `qogir-gtk-theme-git`\* · `lavanda-gtk-theme-git`\* · `matcha-gtk-theme`\* · `catppuccin-gtk-theme-git`\* (the live one; see `recipes/`) · `colloid-gtk-theme-git`\* · `orchis-theme` · `fluent-gtk-theme-git`\* · `whitesur-gtk-theme-git`\* · `graphite-gtk-theme-git`\* · the Fausto-Korpsvart family by palette: `gruvbox-gtk-theme-git`\* · `tokyonight-gtk-theme-git`\* · `everforest-gtk-theme-git`\* · `kanagawa-gtk-theme-git`\* · `rose-pine-gtk-theme`\* |
 | Qt pairs (in `unified`) | `kvantum-qt5` · `kvantum-theme-qogir-git`\* · `kvantum-theme-lavanda-git`\* · `kvantum-theme-matcha-git`\* (local candidate; see `recipes/`) · `kvantum-theme-whitesur-git`\* · `kvantum-theme-orchis-git`\* · `kvantum-theme-catppuccin-git`\* · `kvantum-theme-materia` + `materia-gtk-theme` |
-| Qt | `qt6ct-kde`\* (drop-in replacement for qt6ct with patches for KDE apps; under evaluation for dms-theme-sync) · `qt6-tools` (brings `qtdiag`, which dms-theme-sync uses) |
 | Cursors | `catppuccin-cursors-latte`\* (light mode) · `bibata-cursor-theme`\* · `capitaine-cursors` · `phinger-cursors`\* · `adwaita-cursors` · `vimix-cursors` (official, vinceliuice) · `nordzy-cursors`\* · `xcursor-simp1e`\* · `googledot-cursor-theme`\* · `notwaita-cursor-theme`\* — the XCursor alias sets of these last five not audited yet |
 | Fonts | `maplemono-nf`\* · `maplemono-variable`\* · `ttf-monaspace-variable` (replaces `otf-monaspace`: variable axes, official repo) · `ttf-iosevka-nerd` · `ttf-fira-code` · `ttf-jetbrains-mono-nerd` (for terminals without *font fallback*) · `adwaita-fonts` · `otf-geist-mono-nerd` · `ttf-geist`\* · `ttf-geist-mono-variable`\* · `otf-intel-one-mono`† · `ttf-commit-mono`\* · `ttf-0xproto`\* · `ttf-manrope`\* |
 | Login/boot (in `login`) | `sddm-silent-theme`\* · `where-is-my-sddm-theme-git`\* · `plymouth-theme-catppuccin-mocha-git`\* |
@@ -223,6 +226,16 @@ back to Fusion without warning.
 
 Build fixes for broken AUR packages and narrowly scoped maintenance candidates.
 Each recipe explains its divergence and publication boundary.
+
+- `material-bibata-cursor` — reproducibly builds the 28
+  `Bibata-Material-*` accent variants used by dms-theme-sync. Both the colour
+  generator and Bibata sources are pinned, and the result is installed
+  system-wide under `/usr/share/icons` instead of writing loose files to
+  `~/.icons`.
+
+```sh
+cd recipes/material-bibata-cursor && makepkg -si
+```
 
 - `kvantum-theme-matcha-git` — Kvantum-only maintenance candidate pinned to
   Matcha-kde commit `a3b247b`. It packages the Sea light/dark pair, backports

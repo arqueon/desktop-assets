@@ -8,3 +8,5 @@ pkg/
 # Local SmallDocs decisions and VCS source caches created by makepkg
 .sdocs/
 recipes/kvantum-theme-matcha-git/Matcha-kde/
+recipes/material-bibata-cursor/bibata_cursor/
+recipes/material-bibata-cursor/material-bibata-cursor/

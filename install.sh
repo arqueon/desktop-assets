@@ -14,7 +14,7 @@ Installs the Arqueon desktop asset meta packages.
 
 Options:
   --all             Install the base, DMS integration, and font pairings
-  --dms             Install qt6ct-kde and the Catppuccin Kvantum theme
+  --dms             Install the optional Catppuccin Kvantum/GTK pairing
   --fonts           Install the optional document font pairings
   --stock-papirus   Use stock papirus-folders instead of Catppuccin colours
   -h, --help        Show this help
@@ -67,15 +67,23 @@ paru -S --needed --asdeps \
   "$papirus_package" \
   catppuccin-cursors-mocha \
   qadwaitadecorations-qt6 \
-  kvantum-theme-libadwaita-git
+  kvantum-theme-libadwaita-git \
+  qt6ct-kde
+
+printf '\n==> Building and installing Material Bibata cursor variants\n'
+(
+  cd recipes/material-bibata-cursor
+  makepkg -si
+)
 
 printf '\n==> Building and installing the base meta packages\n'
 makepkg -si
 
 if [[ $install_dms == true ]]; then
   printf '\n==> Installing optional DMS integration\n'
-  paru -S --needed qt6ct-kde
-  paru -S --needed --asdeps kvantum-theme-catppuccin-git
+  paru -S --needed --asdeps \
+    kvantum-theme-catppuccin-git \
+    catppuccin-gtk-theme-git
 fi
 
 if [[ $install_fonts == true ]]; then
