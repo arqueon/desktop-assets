@@ -66,6 +66,7 @@ printf '\n==> Installing AUR prerequisites\n'
 paru -S --needed --asdeps \
   "$papirus_package" \
   catppuccin-cursors-mocha \
+  gtk-engine-murrine \
   qadwaitadecorations-qt6 \
   kvantum-theme-libadwaita-git \
   qt6ct-kde

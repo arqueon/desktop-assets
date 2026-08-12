@@ -65,7 +65,7 @@ paru -S --asdeps kvantum-theme-catppuccin-git catppuccin-gtk-theme-git
 
 **`paru -U` does not work here** (verified 2026-07-10 with paru 2.1.0): it is a
 *passthrough* to `pacman -U` and does not resolve AUR dependencies. Pre-install
-the five AUR dependencies above, install the Bibata recipe, then use
+the six AUR dependencies above, install the Bibata recipe, then use
 `makepkg -si` or the explicit `pacman -U` command. The optional
 `fonts-pairings` meta has its own recipe, so
 it cannot block installation or upgrades of the base split package.
@@ -74,6 +74,12 @@ The packages are **empty**: they only declare dependencies. They install
 nothing into `$HOME` and write no configuration. Which theme is in use at any
 moment is decided by DankMaterialShell and propagated by its
 `dms-theme-sync` plugin.
+
+Installed is not the same as selected. Papirus can be available while DMS
+still keeps `System Default` as its canonical icon theme. Theme Sync then
+reports folder-colour capability as blocked, explains the mismatch, and offers
+an explicit **Use Papirus-Dark** action. Installing this catalogue never
+changes that user preference automatically.
 
 ## The catalogue
 
