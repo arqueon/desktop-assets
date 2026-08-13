@@ -22,8 +22,16 @@ bash install.sh --all       # base + DMS integration + font pairings
 Available options are `--dms`, `--fonts`, and `--stock-papirus`. `--dms` adds
 the Catppuccin Kvantum/GTK pair; the base already contains the automatic-sync
 components. The last option uses the stock Papirus colours instead of the
-Catppuccin variant. The script works in a temporary directory and retains the
-normal `paru`, `pacman`, and `sudo` confirmations; do not run it as root.
+Catppuccin variant. The script works in a temporary directory and runs every
+package transaction unattended (`--noconfirm`, no review or upgrade menus).
+It authenticates `sudo` once at the start and keeps that credential alive; if
+the timestamp is already active or passwordless sudo is configured, it needs
+no input at all. Do not run it as root.
+
+For Catppuccin GTK the installer deliberately builds the repository's fixed
+recipe instead of the AUR PKGBUILD. Its `BATCH_MODE=true` skips the upstream
+Vague/variant questions and prevents the build from trying to apply a theme to
+the live session through `xfconf-query`.
 
 The 28 Material Bibata variants are rendered during installation and occupy
 about 550 MiB installed. This is a one-time build unless the pinned recipe is
@@ -34,22 +42,22 @@ The equivalent manual installation is:
 ```sh
 git clone https://github.com/arqueon/desktop-assets
 cd desktop-assets
-paru -S --needed --asdeps papirus-folders-catppuccin-git catppuccin-cursors-mocha \
+paru -S --needed --asdeps --noconfirm --skipreview \
+  papirus-folders-catppuccin-git catppuccin-cursors-mocha gtk-engine-murrine \
   qadwaitadecorations-qt6 kvantum-theme-libadwaita-git qt6ct-kde
-(cd recipes/material-bibata-cursor && makepkg -si)
-makepkg -si
+(cd recipes/material-bibata-cursor && makepkg -si --needed --noconfirm)
+makepkg -si --needed --noconfirm
 ```
 
-The first step exists because those five are the only hard *depends* that
+The first step exists because those six are the only hard *depends* that
 live in the AUR; everything else comes from official repos and `pacman -U`
 pulls it in by itself. (On CachyOS, `kvantum-theme-libadwaita-git` ships in
 the `cachyos` repo and paru takes it from there without building.)
 
 `papirus-folders-catppuccin-git` provides the same `papirus-folders` command
-as the stock package and intentionally conflicts with it. If paru asks to
-replace/remove `papirus-folders`, answer `y`. To keep the stock colours
-instead, install `papirus-folders` in the first command and do not install the
-Catppuccin variant; never install both.
+as the stock package and intentionally conflicts with it. The installer accepts
+that replacement noninteractively. To keep the stock colours instead, pass
+`--stock-papirus`; the two packages are never installed together.
 
 ### Optional integrations
 
@@ -60,7 +68,8 @@ complete the automatic synchronization routes in `dms-theme-sync`.
 An additional optional visual pair is:
 
 ```sh
-paru -S --asdeps kvantum-theme-catppuccin-git catppuccin-gtk-theme-git
+paru -S --needed --asdeps --noconfirm --skipreview kvantum-theme-catppuccin-git
+(cd recipes/catppuccin-gtk-theme-git && makepkg -si --needed --noconfirm)
 ```
 
 **`paru -U` does not work here** (verified 2026-07-10 with paru 2.1.0): it is a
@@ -170,17 +179,20 @@ all six families turn out to be packaged — in variable builds, which is what
 the loose files were. Install it separately when needed:
 
 ```sh
-paru -S --needed --asdeps ttf-archivo-variable ttf-archivo-narrow \
+paru -S --needed --asdeps --noconfirm --skipreview \
+  ttf-archivo-variable ttf-archivo-narrow \
   ttf-piazzolla-variable ttf-spline-sans-mono
-(cd recipes/otf-impallari-libre-franklin && makepkg)   # the AUR one doesn't build
-sudo pacman -U recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst
-(cd recipes/arqueon-desktop-fonts-pairings && makepkg -si)
+(cd recipes/otf-impallari-libre-franklin && makepkg --noconfirm)   # the AUR one doesn't build
+sudo pacman -U --needed --noconfirm \
+  recipes/otf-impallari-libre-franklin/ttf-impallari-libre-franklin-*.pkg.tar.zst
+(cd recipes/arqueon-desktop-fonts-pairings && makepkg -si --needed --noconfirm)
 ```
 
 To update after pulling new repository changes, repeat the AUR prerequisite
-command and run `makepkg -si` at the repository root. Update the separate font
-pairings only if you installed them. Old package files in the working tree are
-not installation targets and may be removed after a successful upgrade.
+command and run `makepkg -si --needed --noconfirm` at the repository root.
+Update the separate font pairings only if you installed them. Old package files
+in the working tree are not installation targets and may be removed after a
+successful upgrade.
 
 ## Decisions best not reopened
 
@@ -240,7 +252,7 @@ Each recipe explains its divergence and publication boundary.
   `~/.icons`.
 
 ```sh
-cd recipes/material-bibata-cursor && makepkg -si
+cd recipes/material-bibata-cursor && makepkg -si --needed --noconfirm
 ```
 
 - `kvantum-theme-matcha-git` — Kvantum-only maintenance candidate pinned to
@@ -250,7 +262,7 @@ cd recipes/material-bibata-cursor && makepkg -si
   contribution or co-maintenance handoff is agreed.
 
 ```sh
-cd recipes/kvantum-theme-matcha-git && makepkg --cleanbuild --force --check
+cd recipes/kvantum-theme-matcha-git && makepkg --cleanbuild --force --check --noconfirm
 ```
 
 - `catppuccin-gtk-theme-git` — upstream's `install.sh` ends in a
@@ -263,7 +275,7 @@ cd recipes/kvantum-theme-matcha-git && makepkg --cleanbuild --force --check
   integration. The AUR PKGBUILD doesn't use it. One line.
 
 ```sh
-cd recipes/catppuccin-gtk-theme-git && makepkg -si
+cd recipes/catppuccin-gtk-theme-git && makepkg -si --needed --noconfirm
 ```
 
 - `otf-impallari-libre-franklin` (and its `ttf-` half) — the AUR PKGBUILD
@@ -274,11 +286,21 @@ cd recipes/catppuccin-gtk-theme-git && makepkg -si
   to the broken 4.015 (upstream renumbered versions downwards).
 
 ```sh
-cd recipes/otf-impallari-libre-franklin && makepkg
-sudo pacman -U ttf-impallari-libre-franklin-*.pkg.tar.zst
+cd recipes/otf-impallari-libre-franklin && makepkg --noconfirm
+sudo pacman -U --needed --noconfirm ttf-impallari-libre-franklin-*.pkg.tar.zst
 ```
 
 ## Verification
+
+The installer has an isolated command-stub test: it exercises `--all` and
+`--stock-papirus`, verifies every package transaction is noninteractive, and
+ensures Catppuccin GTK is built from the local batch-mode recipe:
+
+```sh
+bash -n install.sh tests/test-install.sh
+shellcheck install.sh tests/test-install.sh
+tests/test-install.sh
+```
 
 Package names are not written from memory. Before touching the `PKGBUILD`:
 
