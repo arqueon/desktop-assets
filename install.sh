@@ -37,11 +37,20 @@ build_and_install() {
     makepkg --config "${makepkg_config}" --cleanbuild --force --check \
       --syncdeps --noconfirm
 
-    local -a built_packages selected_packages selectors
+    local -a predicted_packages built_packages selected_packages selectors
     local package_path package_name selector
-    mapfile -t built_packages < <(
+    mapfile -t predicted_packages < <(
       makepkg --config "${makepkg_config}" --packagelist
     )
+    built_packages=()
+    for package_path in "${predicted_packages[@]}"; do
+      if [[ -f ${package_path} ]]; then
+        built_packages+=("${package_path}")
+      else
+        printf 'Skipping package listed by makepkg but not built: %s\n' \
+          "${package_path}" >&2
+      fi
+    done
     selectors=("$@")
 
     if ((${#selectors[@]} == 0)); then

@@ -4,8 +4,9 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 test_root=$(mktemp -d /tmp/desktop-assets-install-test.XXXXXX)
 fake_bin=${test_root}/bin
+fake_package_dir=${test_root}/packages
 command_log=${test_root}/commands.log
-mkdir -p "${fake_bin}"
+mkdir -p "${fake_bin}" "${fake_package_dir}"
 trap 'rm -rf -- "${test_root}"' EXIT
 
 cat >"${fake_bin}/sudo" <<'EOF'
@@ -48,10 +49,17 @@ printf '\n' >>"${COMMAND_LOG}"
 
 if [[ " $* " == *' --packagelist '* ]]; then
   if [[ $PWD == */recipes/otf-impallari-libre-franklin ]]; then
-    printf '%s/%s\n' "$PWD" 'otf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst'
-    printf '%s/%s\n' "$PWD" 'ttf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst'
+    : >"$FAKE_PACKAGE_DIR/otf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst"
+    : >"$FAKE_PACKAGE_DIR/ttf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst"
+    printf '%s/%s\n' "$FAKE_PACKAGE_DIR" 'otf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst'
+    printf '%s/%s\n' "$FAKE_PACKAGE_DIR" 'ttf-impallari-libre-franklin-1:3.007-1-any.pkg.tar.zst'
+  elif [[ $PWD == */recipes/material-bibata-cursor ]]; then
+    : >"$FAKE_PACKAGE_DIR/material-bibata-cursor-1-any.pkg.tar.zst"
+    printf '%s/%s\n' "$FAKE_PACKAGE_DIR" 'material-bibata-cursor-1-any.pkg.tar.zst'
+    printf '%s/%s\n' "$FAKE_PACKAGE_DIR" 'material-bibata-cursor-debug-1-any.pkg.tar.zst'
   else
-    printf '%s/fake-%s-1-any.pkg.tar.zst\n' "$PWD" "${PWD##*/}"
+    : >"$FAKE_PACKAGE_DIR/fake-${PWD##*/}-1-any.pkg.tar.zst"
+    printf '%s/fake-%s-1-any.pkg.tar.zst\n' "$FAKE_PACKAGE_DIR" "${PWD##*/}"
   fi
 fi
 EOF
@@ -68,6 +76,7 @@ chmod +x "${fake_bin}"/*
 run_installer() {
   : >"${command_log}"
   COMMAND_LOG=${command_log} \
+    FAKE_PACKAGE_DIR=${fake_package_dir} \
     ARQUEON_DESKTOP_ASSETS_SOURCE_DIR=${repo_root} \
     PATH="${fake_bin}:${PATH}" \
     bash "${repo_root}/install.sh" "$@"
@@ -111,6 +120,10 @@ grep -Fq 'BATCH_MODE=true ./install.sh' \
 libre_pacman_line=$(grep '^pacman ' "${command_log}" | grep 'impallari-libre-franklin')
 [[ $libre_pacman_line == *'/ttf-impallari-libre-franklin-'* ]]
 [[ $libre_pacman_line != *'/otf-impallari-libre-franklin-1:'* ]]
+
+material_pacman_line=$(grep '^pacman ' "${command_log}" | grep 'material-bibata-cursor')
+[[ $material_pacman_line == *'/material-bibata-cursor-1-any.pkg.tar.zst'* ]]
+[[ $material_pacman_line != *'/material-bibata-cursor-debug-'* ]]
 
 run_installer --stock-papirus
 
